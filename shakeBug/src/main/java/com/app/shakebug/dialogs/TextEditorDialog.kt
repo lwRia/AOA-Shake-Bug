@@ -1,4 +1,4 @@
-package com.appsonair.shakebug.dialogs
+package com.app.shakebug.dialogs
 
 import android.content.Context
 import android.graphics.Color
@@ -16,9 +16,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.appsonair.shakebug.R
-import com.appsonair.shakebug.adapters.ColorPickerAdapter
-import com.appsonair.shakebug.adapters.ColorPickerAdapter.OnColorPickerClickListener
+import com.app.shakebug.R
+import com.app.shakebug.adapters.ColorPickerAdapter
+import com.app.shakebug.adapters.ColorPickerAdapter.OnColorPickerClickListener
 
 class TextEditorDialog : DialogFragment() {
 

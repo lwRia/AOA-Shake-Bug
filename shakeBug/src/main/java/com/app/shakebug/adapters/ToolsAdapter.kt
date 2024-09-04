@@ -1,12 +1,12 @@
-package com.appsonair.shakebug.adapters
+package com.app.shakebug.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.appsonair.shakebug.R
-import com.appsonair.shakebug.enums.ToolType
+import com.app.shakebug.R
+import com.app.shakebug.enums.ToolType
 
 class ToolsAdapter(private val mOnItemSelected: OnItemSelected) :
     RecyclerView.Adapter<ToolsAdapter.ViewHolder>() {

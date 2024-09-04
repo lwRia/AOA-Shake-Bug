@@ -1,4 +1,4 @@
-package com.appsonair.shakebug.base;
+package com.app.shakebug.base;
 
 //noinspection SuspiciousImport
 import android.R

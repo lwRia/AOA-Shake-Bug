@@ -1,4 +1,4 @@
-package com.appsonair.shakebug
+package com.app.shakebug
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

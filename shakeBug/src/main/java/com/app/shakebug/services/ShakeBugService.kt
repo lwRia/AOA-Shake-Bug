@@ -1,4 +1,4 @@
-package com.appsonair.shakebug.services
+package com.app.shakebug.services
 
 import android.content.Context
 import android.graphics.Color

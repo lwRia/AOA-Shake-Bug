@@ -1,4 +1,4 @@
-package com.appsonair.shakebug.dialogs
+package com.app.shakebug.dialogs
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,9 +8,9 @@ import android.widget.RadioGroup
 import android.widget.SeekBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.appsonair.shakebug.R
-import com.appsonair.shakebug.adapters.ColorPickerAdapter
-import com.appsonair.shakebug.adapters.ColorPickerAdapter.OnColorPickerClickListener
+import com.app.shakebug.R
+import com.app.shakebug.adapters.ColorPickerAdapter
+import com.app.shakebug.adapters.ColorPickerAdapter.OnColorPickerClickListener
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ja.burhanrashid52.photoeditor.shape.ShapeType
 

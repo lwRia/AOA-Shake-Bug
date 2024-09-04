@@ -1,4 +1,4 @@
-package com.appsonair.shakebug.models;
+package com.app.shakebug.models;
 
 public class DeviceInfo {
     private final String deviceModel;

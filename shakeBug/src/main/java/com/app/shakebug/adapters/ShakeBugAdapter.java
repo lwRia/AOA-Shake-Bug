@@ -1,4 +1,4 @@
-package com.appsonair.shakebug.adapters;
+package com.app.shakebug.adapters;
 
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.appsonair.shakebug.R;
-import com.appsonair.shakebug.interfaces.OnItemClickListener;
+import com.app.shakebug.R;
+import com.app.shakebug.interfaces.OnItemClickListener;
 import com.bumptech.glide.Glide;
 
 import java.util.List;

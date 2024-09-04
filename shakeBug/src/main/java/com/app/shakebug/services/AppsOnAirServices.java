@@ -1,4 +1,4 @@
-package com.appsonair.shakebug.services;
+package com.app.shakebug.services;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -14,9 +14,9 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 
-import com.appsonair.shakebug.R;
-import com.appsonair.shakebug.activities.EditImageActivity;
-import com.appsonair.shakebug.activities.FeedbackActivity;
+import com.app.shakebug.R;
+import com.app.shakebug.activities.EditImageActivity;
+import com.app.shakebug.activities.FeedbackActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;

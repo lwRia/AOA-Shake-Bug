@@ -1,4 +1,4 @@
-package com.appsonair.shakebug.dialogs
+package com.app.shakebug.dialogs
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.appsonair.shakebug.R
+import com.app.shakebug.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment

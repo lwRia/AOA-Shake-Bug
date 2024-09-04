@@ -1,4 +1,4 @@
-package com.appsonair.shakebug.activities;
+package com.app.shakebug.activities;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -41,11 +41,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.appsonair.shakebug.R;
-import com.appsonair.shakebug.adapters.ShakeBugAdapter;
-import com.appsonair.shakebug.interfaces.OnItemClickListener;
-import com.appsonair.shakebug.models.DeviceInfo;
-import com.appsonair.shakebug.services.ShakeBugService;
+import com.app.shakebug.R;
+import com.app.shakebug.adapters.ShakeBugAdapter;
+import com.app.shakebug.interfaces.OnItemClickListener;
+import com.app.shakebug.models.DeviceInfo;
+import com.app.shakebug.services.ShakeBugService;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.skydoves.powerspinner.OnSpinnerItemSelectedListener;
@@ -288,8 +288,8 @@ public class FeedbackActivity extends AppCompatActivity {
                 }
             }
 
-            String libVersionName = com.appsonair.shakebug.BuildConfig.VERSION_NAME;
-            String libVersionCode = com.appsonair.shakebug.BuildConfig.VERSION_CODE;
+            String libVersionName = com.app.shakebug.BuildConfig.VERSION_NAME;
+            String libVersionCode = com.app.shakebug.BuildConfig.VERSION_CODE;
             Log.d(TAG, "getDeviceInfo: AppsOnAirVersion : " + libVersionName);
             Log.d(TAG, "getDeviceInfo: AppsOnAirVersion : " + libVersionCode);
 

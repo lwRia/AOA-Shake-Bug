@@ -1,4 +1,4 @@
-package com.appsonair.shakebug.services
+package com.app.shakebug.services
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver

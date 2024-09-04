@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    namespace 'com.appsonair.shakebug'
+    namespace 'com.app.shakebug'
     compileSdk 34
 
     defaultConfig {
         minSdk 24
         versionCode 1
-        versionName "1.0.6"
+        versionName "1.0.0"
         android {
             buildConfigField 'String', 'BASE_URL', BASE_URL
             buildConfigField 'String', 'VERSION_CODE', VERSION_CODE

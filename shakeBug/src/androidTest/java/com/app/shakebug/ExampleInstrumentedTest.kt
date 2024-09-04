@@ -1,4 +1,4 @@
-package com.appsonair.shakebug
+package com.app.shakebug
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -17,6 +17,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.appsonair.shakebug.test", appContext.packageName)
+        assertEquals("com.app.shakebug.test", appContext.packageName)
     }
 }
