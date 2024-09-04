@@ -43,6 +43,7 @@ class ColorPickerAdapter internal constructor(
 
         init {
             itemView.setOnClickListener {
+                @Suppress("DEPRECATION")
                 onColorPickerClickListener.onColorPickerClickListener(
                     colorPickerColors[adapterPosition]
                 )

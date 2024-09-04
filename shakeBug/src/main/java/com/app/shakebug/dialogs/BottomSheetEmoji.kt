@@ -48,8 +48,10 @@ class BottomSheetEmoji : BottomSheetDialogFragment() {
         val params = (contentView.parent as View).layoutParams as CoordinatorLayout.LayoutParams
         val behavior = params.behavior
         if (behavior != null && behavior is BottomSheetBehavior<*>) {
+            @Suppress("DEPRECATION")
             behavior.setBottomSheetCallback(mBottomSheetBehaviorCallback)
         }
+        @Suppress("DEPRECATION")
         (contentView.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
         val rvEmoji: RecyclerView = contentView.findViewById(R.id.rv_emoji)
         val gridLayoutManager = GridLayoutManager(activity, 5)

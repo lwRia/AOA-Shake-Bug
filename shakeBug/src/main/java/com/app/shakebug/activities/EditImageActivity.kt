@@ -8,7 +8,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
@@ -18,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresPermission
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
@@ -60,6 +63,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+
 class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickListener,
     BottomSheetShape.Properties, BottomSheetEmoji.EmojiListener, OnItemSelected {
 
@@ -70,6 +74,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
     private lateinit var mEmojiBSFragment: BottomSheetEmoji
     private lateinit var mRvTools: RecyclerView
     private val mEditingToolsAdapter = ToolsAdapter(this)
+    private lateinit var callback: OnBackPressedCallback
 
     @VisibleForTesting
     var mSaveImageUri: Uri? = null
@@ -116,13 +121,30 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
 
         mPhotoEditor.setOnPhotoEditorListener(this)
         mSaveFileHelper = FileSaveHelper(this)
+
+        callback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() {
+                if (!mPhotoEditor.isCacheEmpty) {
+                    showSaveDialog()
+                } else {
+                    finish()
+                }
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 
     private fun handleIntentImage(source: ImageView) {
         if (intent == null) {
             return
         } else if (intent != null && intent.hasExtra("IMAGE_PATH")) {
-            val imagePath = intent.getParcelableExtra<Uri>("IMAGE_PATH")
+            val imagePath = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra<Uri>("IMAGE_PATH", Uri::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra("IMAGE_PATH")
+            }
             source.setImageURI(imagePath)
         }
     }
@@ -181,7 +203,11 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
     @SuppressLint("MissingPermission")
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.img_close -> onBackPressed()
+            R.id.img_close -> {
+                callback.isEnabled = true
+                callback.handleOnBackPressed()
+            }
+
             R.id.tv_done -> saveImage()
         }
     }
@@ -268,9 +294,13 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                 PICK_REQUEST -> try {
                     mPhotoEditor.clearAllViews()
                     val uri = data?.data
-                    val bitmap = MediaStore.Images.Media.getBitmap(
-                        contentResolver, uri
-                    )
+                    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        val source = ImageDecoder.createSource(contentResolver, uri!!)
+                        ImageDecoder.decodeBitmap(source)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                    }
                     mPhotoEditorView.source.setImageBitmap(bitmap)
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -419,6 +449,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                 val intent = Intent()
                 intent.type = "image/*"
                 intent.action = Intent.ACTION_GET_CONTENT
+                @Suppress("DEPRECATION")
                 startActivityForResult(
                     Intent.createChooser(
                         intent,
@@ -434,15 +465,6 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
             return
         }
         fragment.show(supportFragmentManager, fragment.tag)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        if (!mPhotoEditor.isCacheEmpty) {
-            showSaveDialog()
-        } else {
-            super.onBackPressed()
-        }
     }
 
     companion object {
