@@ -11,22 +11,19 @@
     </issue>
 
     <issue errorLine1="    android:background=&quot;@android:color/black&quot;"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        id="Overdraw"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" id="Overdraw"
         message="Possible overdraw: Root element paints background `@android:color/black` with a theme that also paints a background (inferred theme is `@style/Theme_AppCompat_Light_NoActionBar`)">
         <location column="5" file="src/main/res/layout/activity_edit_image.xml" line="7" />
     </issue>
 
     <issue errorLine1="    android:background=&quot;@color/light_blue&quot;"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        id="Overdraw"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" id="Overdraw"
         message="Possible overdraw: Root element paints background `@color/light_blue` with a theme that also paints a background (inferred theme is `@style/Theme_AppCompat_Light_NoActionBar`)">
         <location column="5" file="src/main/res/layout/activity_feedback.xml" line="8" />
     </issue>
 
     <issue errorLine1="    android:background=&quot;@color/add_text_bg&quot;>"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        id="Overdraw"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" id="Overdraw"
         message="Possible overdraw: Root element paints background `@color/add_text_bg` with a theme that also paints a background (inferred theme is `@android:style/Theme.Holo`)">
         <location column="5" file="src/main/res/layout/add_text_dialog.xml" line="7" />
     </issue>
@@ -51,29 +48,29 @@
         <location column="10" file="src/main/res/layout/activity_feedback.xml" line="35" />
     </issue>
 
-    <issue errorLine1="                    &lt;ImageView" errorLine2="                     ~~~~~~~~~"
-        id="ContentDescription" message="Missing `contentDescription` attribute on image">
+    <issue errorLine1="                    &lt;ImageView"
+        errorLine2="                     ~~~~~~~~~" id="ContentDescription"
+        message="Missing `contentDescription` attribute on image">
         <location column="22" file="src/main/res/layout/activity_feedback.xml" line="163" />
     </issue>
 
-    <issue errorLine1="    &lt;ImageView" errorLine2="     ~~~~~~~~~"
-        id="ContentDescription" message="Missing `contentDescription` attribute on image">
+    <issue errorLine1="    &lt;ImageView" errorLine2="     ~~~~~~~~~" id="ContentDescription"
+        message="Missing `contentDescription` attribute on image">
         <location column="6" file="src/main/res/layout/item_shake_bug.xml" line="8" />
     </issue>
 
-    <issue errorLine1="    &lt;ImageView" errorLine2="     ~~~~~~~~~"
-        id="ContentDescription" message="Missing `contentDescription` attribute on image">
+    <issue errorLine1="    &lt;ImageView" errorLine2="     ~~~~~~~~~" id="ContentDescription"
+        message="Missing `contentDescription` attribute on image">
         <location column="6" file="src/main/res/layout/item_shake_bug.xml" line="14" />
     </issue>
 
-    <issue errorLine1="    &lt;ImageView" errorLine2="     ~~~~~~~~~"
-        id="ContentDescription" message="Missing `contentDescription` attribute on image">
+    <issue errorLine1="    &lt;ImageView" errorLine2="     ~~~~~~~~~" id="ContentDescription"
+        message="Missing `contentDescription` attribute on image">
         <location column="6" file="src/main/res/layout/row_tools.xml" line="10" />
     </issue>
 
-    <issue errorLine1="    &lt;EditText"
-        errorLine2="     ~~~~~~~~"
-        id="LabelFor" message="Missing accessibility label: provide either a view with an `android:labelFor` that references this view or provide an `android:hint`">
+    <issue errorLine1="    &lt;EditText" errorLine2="     ~~~~~~~~" id="LabelFor"
+        message="Missing accessibility label: provide either a view with an `android:labelFor` that references this view or provide an `android:hint`">
         <location column="6" file="src/main/res/layout/add_text_dialog.xml" line="24" />
     </issue>
 

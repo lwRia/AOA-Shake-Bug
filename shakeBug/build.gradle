@@ -10,7 +10,7 @@ android {
     defaultConfig {
         minSdk 24
         versionCode 1
-        versionName "1.0.2"
+        versionName "1.0.3"
         android {
             buildConfigField 'String', 'BASE_URL', BASE_URL
             buildConfigField 'String', 'VERSION_CODE', VERSION_CODE
@@ -63,7 +63,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.app'
                 artifactId = 'shakebug'
-                version = '1.0.2'
+                version = '1.0.3'
             }
         }
     }

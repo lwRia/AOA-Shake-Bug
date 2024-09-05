@@ -9,7 +9,9 @@
         android:id="@+id/img_bug"
         android:layout_width="100dp"
         android:layout_height="160dp"
-        android:background="@drawable/border" />
+        android:background="@drawable/border"
+        android:padding="2dp"
+        android:scaleType="fitCenter" />
 
     <ImageView
         android:id="@+id/img_remove"
