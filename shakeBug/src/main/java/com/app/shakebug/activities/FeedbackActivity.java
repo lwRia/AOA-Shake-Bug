@@ -41,6 +41,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.app.aoacore.interfaces.UpdateNetwork;
+import com.app.aoacore.services.CoreService;
+import com.app.aoacore.services.NetworkService;
 import com.app.shakebug.R;
 import com.app.shakebug.adapters.ShakeBugAdapter;
 import com.app.shakebug.interfaces.OnItemClickListener;
@@ -79,14 +82,23 @@ public class FeedbackActivity extends AppCompatActivity {
         }
     };
     private String screenOrientation;
+    private boolean hasNetwork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
 
-        ShakeBugService.Companion companion1 = ShakeBugService.Companion;
-        Log.d(TAG, "testInitialMap :::::::" + companion1.getExtraPayload());
+        String appId = CoreService.getAppId(this);
+        Log.d(TAG, "ShakeBug AppId: " + appId);
+
+        NetworkService.checkConnectivity(this, new UpdateNetwork() {
+            @Override
+            public void onUpdate(boolean isAvailable) {
+                hasNetwork = isAvailable;
+            }
+        });
+
         //init views
         LinearLayout linearLayout = findViewById(R.id.ll_main);
         LinearLayout llAppbar = findViewById(R.id.ll_appbar);
@@ -186,6 +198,11 @@ public class FeedbackActivity extends AppCompatActivity {
             } else {
                 hideKeyboard();
                 etDescription.setError(null);
+                if (hasNetwork) {
+                    //call api
+                } else {
+                    Log.d(TAG, "ShakeBug : Please check your internet connection!");
+                }
             }
         });
 

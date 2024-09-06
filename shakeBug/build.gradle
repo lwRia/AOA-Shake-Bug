@@ -10,7 +10,7 @@ android {
     defaultConfig {
         minSdk 24
         versionCode 1
-        versionName "1.0.3"
+        versionName "1.0.4"
         android {
             buildConfigField 'String', 'BASE_URL', BASE_URL
             buildConfigField 'String', 'VERSION_CODE', VERSION_CODE
@@ -50,6 +50,7 @@ dependencies {
     implementation libs.photoeditor
     implementation libs.powerspinner
     implementation libs.glide
+    implementation libs.aoa.core
     annotationProcessor libs.compiler
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
@@ -63,7 +64,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.app'
                 artifactId = 'shakebug'
-                version = '1.0.3'
+                version = '1.0.4'
             }
         }
     }

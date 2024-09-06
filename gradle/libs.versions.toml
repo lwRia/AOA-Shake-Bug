@@ -1,9 +1,9 @@
 [versions]
-agp = "8.5.1"
+agp = "8.5.2"
 androidMavenGradlePlugin = "2.0"
-compiler = "4.15.1"
+aoaCore = "v1.0.2"
 constraintlayout = "2.1.4"
-fragmentKtx = "1.8.2"
+fragmentKtx = "1.8.3"
 gradle = "7.0.4"
 gradleNexusStagingPlugin = "0.22.0"
 kotlin = "1.9.0"
@@ -12,20 +12,19 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 kotlinGradlePlugin = "1.7.0"
-lifecycleRuntimeKtx = "2.8.4"
-activityCompose = "1.9.1"
-composeBom = "2024.04.01"
+lifecycleRuntimeKtx = "2.8.5"
+activityCompose = "1.9.2"
 appcompat = "1.7.0"
 material = "1.12.0"
-okhttp = "3.10.0"
-photoeditor = "3.0.1"
 powerspinner = "1.2.7"
+activity = "1.9.2"
 
 [libraries]
 android-maven-gradle-plugin = { module = "com.github.dcendents:android-maven-gradle-plugin", version.ref = "androidMavenGradlePlugin" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+aoa-core = { module = "com.github.lwRia:AOA-Core", version.ref = "aoaCore" }
 compiler = { module = "com.github.bumptech.glide:compiler", version = "4.16.0" }
 glide = { module = "com.github.bumptech.glide:glide", version = "4.16.0" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }

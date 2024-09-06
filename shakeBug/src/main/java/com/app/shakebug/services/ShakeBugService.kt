@@ -37,7 +37,7 @@ class ShakeBugService {
         var raiseNewTicket: Boolean = false
         var extraPayload: Map<String, String> = mapOf<String, String>().withDefault { "" }
 
-        fun isValidColorHex(colorHex: String): Boolean {
+        private fun isValidColorHex(colorHex: String): Boolean {
             return try {
                 Color.parseColor(colorHex)
                 true

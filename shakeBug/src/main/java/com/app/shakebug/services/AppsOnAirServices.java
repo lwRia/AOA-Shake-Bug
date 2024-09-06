@@ -29,18 +29,10 @@ import java.util.Objects;
 public class AppsOnAirServices {
 
     private static final String TAG = "AppsOnAirServices";
-    static String appId;
-    static Boolean showNativeUI;
-    static SensorManager mSensorManager;
-    static float mAccel, mAccelCurrent, mAccelLast;
-
-    public static void setAppId(String appId, boolean showNativeUI) {
-        AppsOnAirServices.appId = appId;
-        AppsOnAirServices.showNativeUI = showNativeUI;
-    }
+    private static float mAccel, mAccelCurrent, mAccelLast;
 
     public static void shakeBug(Context context) {
-        mSensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
+        SensorManager mSensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
         Objects.requireNonNull(mSensorManager).registerListener(new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
@@ -66,7 +58,7 @@ public class AppsOnAirServices {
         mAccelLast = SensorManager.GRAVITY_EARTH;
     }
 
-    public static void captureScreen(Context context) {
+    static void captureScreen(Context context) {
         View rootView = ((Activity) context).getWindow().getDecorView().getRootView();
         rootView.setDrawingCacheEnabled(true);
         Bitmap screenshotBitmap = Bitmap.createBitmap(rootView.getDrawingCache());
@@ -88,19 +80,19 @@ public class AppsOnAirServices {
         context.startActivity(intent);
     }
 
-    public static void raiseNewTicket(Context context) {
+    static void raiseNewTicket(Context context) {
         Intent intent = new Intent(context, FeedbackActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
-    public static String getCurrentDateTimeString() {
+    static String getCurrentDateTimeString() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
         return dateFormat.format(calendar.getTime());
     }
 
-    public static String saveBitmapToFile(Bitmap bitmap, Context context) {
+    static String saveBitmapToFile(Bitmap bitmap, Context context) {
         try {
             File cacheDir = context.getCacheDir();
             String fileName = context.getString(R.string.app_name) + "_" + getCurrentDateTimeString() + ".jpg";

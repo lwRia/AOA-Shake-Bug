@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.app.shakebug.services.AppsOnAirServices
 import com.app.shakebug.services.ShakeBugService
 import com.example.shakebug.ui.theme.ShakeBugTheme
 
@@ -74,9 +73,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
-        AppsOnAirServices.setAppId("---------app-id-------------", true)
-
         ShakeBugService.shakeBug(this)
     }
 }
