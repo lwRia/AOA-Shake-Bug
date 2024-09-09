@@ -59,7 +59,8 @@ class MainActivity : ComponentActivity() {
                                     extraPayload = mapOf(
                                         "title" to "Initial Demo",
                                         "city" to "Surat",
-                                        "state" to "Gujarat"
+                                        "state" to "Gujarat",
+                                        "isFromIndia" to true
                                     )
                                 )
                             },

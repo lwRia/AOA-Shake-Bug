@@ -35,7 +35,7 @@ class ShakeBugService {
         var hintColor: String = HINT_COLOR
         var inputTextColor: String = INPUT_TEXT_COLOR
         var raiseNewTicket: Boolean = false
-        var extraPayload: Map<String, String> = mapOf<String, String>().withDefault { "" }
+        var extraPayload: Map<String, Any> = mapOf<String, Any>().withDefault { "" }
 
         private fun isValidColorHex(colorHex: String): Boolean {
             return try {
@@ -51,7 +51,7 @@ class ShakeBugService {
         fun shakeBug(
             context: Context,
             raiseNewTicket: Boolean = false,
-            extraPayload: Map<String, String> = mapOf<String, String>().withDefault { "" },
+            extraPayload: Map<String, Any> = mapOf<String, Any>().withDefault { "" },
             pageBackgroundColor: String = PAGE_BACKGROUND_COLOR,
             appbarBackgroundColor: String = APP_BAR_BACKGROUND_COLOR,
             appbarTitleText: String = APP_BAR_TITLE_TEXT,

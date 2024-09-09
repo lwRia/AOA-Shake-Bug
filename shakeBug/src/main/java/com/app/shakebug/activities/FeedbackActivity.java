@@ -36,12 +36,10 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.app.aoacore.interfaces.UpdateNetwork;
 import com.app.aoacore.services.CoreService;
 import com.app.aoacore.services.NetworkService;
 import com.app.shakebug.R;
@@ -89,15 +87,7 @@ public class FeedbackActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
 
-        String appId = CoreService.getAppId(this);
-        Log.d(TAG, "ShakeBug AppId: " + appId);
-
-        NetworkService.checkConnectivity(this, new UpdateNetwork() {
-            @Override
-            public void onUpdate(boolean isAvailable) {
-                hasNetwork = isAvailable;
-            }
-        });
+        NetworkService.checkConnectivity(this, isAvailable -> hasNetwork = isAvailable);
 
         //init views
         LinearLayout linearLayout = findViewById(R.id.ll_main);
@@ -133,6 +123,9 @@ public class FeedbackActivity extends AppCompatActivity {
 
         //set view properties
         ShakeBugService.Companion companion = ShakeBugService.Companion;
+
+        Log.d(TAG, "getDeviceInfo: Extra Payload : " + companion.getExtraPayload());
+
         linearLayout.setBackgroundColor(parseColorToInteger(companion.getPageBackgroundColor()));
 
         llAppbar.setBackgroundColor(parseColorToInteger(companion.getAppbarBackgroundColor()));
@@ -173,11 +166,7 @@ public class FeedbackActivity extends AppCompatActivity {
         imgAdd.setOnClickListener(view -> openGallery());
 
         spinner.selectItemByIndex(0);
-        spinner.setOnSpinnerItemSelectedListener(new OnSpinnerItemSelectedListener<String>() {
-            @Override
-            public void onItemSelected(int oldIndex, @Nullable String oldItem, int newIndex, String newItem) {
-
-            }
+        spinner.setOnSpinnerItemSelectedListener((OnSpinnerItemSelectedListener<String>) (oldIndex, oldItem, newIndex, newItem) -> {
         });
 
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -199,7 +188,12 @@ public class FeedbackActivity extends AppCompatActivity {
                 hideKeyboard();
                 etDescription.setError(null);
                 if (hasNetwork) {
-                    //call api
+                    String appId = CoreService.getAppId(this);
+                    if (appId.isEmpty()) {
+                        Log.d(TAG, "ShakeBug AppId: " + getString(R.string.error_something_wrong));
+                    } else {
+                        Log.d(TAG, "ShakeBug AppId: " + appId);
+                    }
                 } else {
                     Log.d(TAG, "ShakeBug : Please check your internet connection!");
                 }
@@ -255,31 +249,25 @@ public class FeedbackActivity extends AppCompatActivity {
                 int insetsRight = insets.getInsets(WindowInsets.Type.systemBars()).right;
                 int insetsTop = insets.getInsets(WindowInsets.Type.systemBars()).top;
                 int insetsBottom = insets.getInsets(WindowInsets.Type.systemBars()).bottom;
-
                 screenWidth = windowMetrics.getBounds().width() - insetsLeft - insetsRight;
                 screenHeight = windowMetrics.getBounds().height() - insetsTop - insetsBottom;
-
-                Log.d(TAG, "getDeviceInfo: Width : " + screenWidth + " pixels");
-                Log.d(TAG, "getDeviceInfo: Height : " + screenHeight + " pixels");
             } else {
                 DisplayMetrics displayMetrics = new DisplayMetrics();
                 WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
                 windowManager.getDefaultDisplay().getMetrics(displayMetrics);
                 screenWidth = displayMetrics.widthPixels;
                 screenHeight = displayMetrics.heightPixels;
-
-                Log.d(TAG, "getDeviceInfo: Width : " + screenWidth + " pixels");
-                Log.d(TAG, "getDeviceInfo: Height : " + screenHeight + " pixels");
             }
+            Log.d(TAG, "getDeviceInfo: Width : " + screenWidth + " pixels");
+            Log.d(TAG, "getDeviceInfo: Height : " + screenHeight + " pixels");
 
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                 screenOrientation = "Portrait";
-                Log.d(TAG, "getDeviceInfo: Orientation : " + screenOrientation);
             } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 screenOrientation = "Landscape";
-                Log.d(TAG, "getDeviceInfo: Orientation : " + screenOrientation);
             }
+            Log.d(TAG, "getDeviceInfo: Orientation : " + screenOrientation);
 
             String usedStorage = getReadableStorageSize(getTotalStorageSize(this, false));
             Log.d(TAG, "getDeviceInfo: Used storage : " + usedStorage);
