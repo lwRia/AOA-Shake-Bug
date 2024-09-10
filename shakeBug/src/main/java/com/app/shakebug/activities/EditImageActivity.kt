@@ -140,7 +140,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
             return
         } else if (intent != null && intent.hasExtra("IMAGE_PATH")) {
             val imagePath = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                intent.getParcelableExtra<Uri>("IMAGE_PATH", Uri::class.java)
+                intent.getParcelableExtra("IMAGE_PATH", Uri::class.java)
             } else {
                 @Suppress("DEPRECATION")
                 intent.getParcelableExtra("IMAGE_PATH")
@@ -169,7 +169,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
 
     override fun onEditTextChangeListener(rootView: View, text: String, colorCode: Int) {
         rootView.let {
-            val textEditorDialogFragment = TextEditorDialog.show(this, text.toString(), colorCode)
+            val textEditorDialogFragment = TextEditorDialog.show(this, text, colorCode)
             textEditorDialogFragment.setOnTextEditorListener(object :
                 TextEditorDialog.TextEditorListener {
                 override fun onDone(inputText: String, colorCode: Int) {

@@ -1,24 +1,24 @@
 package com.app.shakebug.models;
 
 public class DeviceInfo {
-    private final String deviceModel;
-    private final String deviceOsVersion;
-    private final String deviceBatteryLevel;
-    private final String deviceScreenSize;
-    private final String deviceOrientation;
-    private final String environment;
-    private final String deviceRegionCode;
-    private final String deviceRegionName;
-    private final String timestamp;
-    private final String buildVersionNumber;
-    private final String releaseVersionNumber;
-    private final String bundleIdentifier;
-    private final String appName;
-    private final String deviceUsedStorage;
-    private final String deviceTotalStorage;
-    private final String deviceMemory;
-    private final String appMemoryUsage;
-    private final String appsOnAirSDKVersion;
+    final String deviceModel;
+    final String deviceOsVersion;
+    final String deviceBatteryLevel;
+    final String deviceScreenSize;
+    final String deviceOrientation;
+    final String environment;
+    final String deviceRegionCode;
+    final String deviceRegionName;
+    final String timestamp;
+    final String buildVersionNumber;
+    final String releaseVersionNumber;
+    final String bundleIdentifier;
+    final String appName;
+    final String deviceUsedStorage;
+    final String deviceTotalStorage;
+    final String deviceMemory;
+    final String appMemoryUsage;
+    final String appsOnAirSDKVersion;
 
     private DeviceInfo(Builder builder) {
         this.deviceModel = builder.deviceModel;
@@ -39,78 +39,6 @@ public class DeviceInfo {
         this.deviceMemory = builder.deviceMemory;
         this.appMemoryUsage = builder.appMemoryUsage;
         this.appsOnAirSDKVersion = builder.appsOnAirSDKVersion;
-    }
-
-    public String getDeviceModel() {
-        return deviceModel;
-    }
-
-    public String getDeviceOsVersion() {
-        return deviceOsVersion;
-    }
-
-    public String getDeviceBatteryLevel() {
-        return deviceBatteryLevel;
-    }
-
-    public String getDeviceScreenSize() {
-        return deviceScreenSize;
-    }
-
-    public String getDeviceOrientation() {
-        return deviceOrientation;
-    }
-
-    public String getEnvironment() {
-        return environment;
-    }
-
-    public String getDeviceRegionCode() {
-        return deviceRegionCode;
-    }
-
-    public String getDeviceRegionName() {
-        return deviceRegionName;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public String getBuildVersionNumber() {
-        return buildVersionNumber;
-    }
-
-    public String getReleaseVersionNumber() {
-        return releaseVersionNumber;
-    }
-
-    public String getBundleIdentifier() {
-        return bundleIdentifier;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public String getDeviceUsedStorage() {
-        return deviceUsedStorage;
-    }
-
-    public String getDeviceTotalStorage() {
-        return deviceTotalStorage;
-    }
-
-    public String getDeviceMemory() {
-        return deviceMemory;
-    }
-
-    public String getAppMemoryUsage() {
-        return appMemoryUsage;
-    }
-
-    public String getAppsOnAirSDKVersion() {
-        return appsOnAirSDKVersion;
     }
 
     public static class Builder {
