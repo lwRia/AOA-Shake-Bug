@@ -190,12 +190,12 @@ public class FeedbackActivity extends AppCompatActivity {
                 if (hasNetwork) {
                     String appId = CoreService.getAppId(this);
                     if (appId.isEmpty()) {
-                        Log.d(TAG, "ShakeBug AppId: " + getString(R.string.error_something_wrong));
+                        Log.d(TAG, "AOAShakeBug AppId: " + getString(R.string.error_something_wrong));
                     } else {
-                        Log.d(TAG, "ShakeBug AppId: " + appId);
+                        Log.d(TAG, "AOAShakeBug AppId: " + appId);
                     }
                 } else {
-                    Log.d(TAG, "ShakeBug : Please check your internet connection!");
+                    Log.d(TAG, "AOAShakeBug : Please check your internet connection!");
                 }
             }
         });
