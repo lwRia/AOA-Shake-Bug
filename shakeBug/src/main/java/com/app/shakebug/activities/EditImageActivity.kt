@@ -122,7 +122,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
         mPhotoEditor.setOnPhotoEditorListener(this)
         mSaveFileHelper = FileSaveHelper(this)
 
-        callback = object : OnBackPressedCallback(false) {
+        callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (!mPhotoEditor.isCacheEmpty) {
                     showSaveDialog()
