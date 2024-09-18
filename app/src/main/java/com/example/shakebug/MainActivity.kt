@@ -56,12 +56,12 @@ class MainActivity : ComponentActivity() {
                                 ShakeBugService.shakeBug(
                                     this@MainActivity,
                                     raiseNewTicket = true,
+                                    options = mutableMapOf("pageBackgroundColor" to "#FFFFC5"),
                                     extraPayload = mapOf(
-                                        "title" to "Initial Demo",
                                         "city" to "Surat",
                                         "state" to "Gujarat",
                                         "isFromIndia" to true
-                                    )
+                                    ),
                                 )
                             },
                         ) {

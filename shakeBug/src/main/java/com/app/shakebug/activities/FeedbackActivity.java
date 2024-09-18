@@ -67,6 +67,7 @@ public class FeedbackActivity extends AppCompatActivity {
     private static final String TAG = "FeedbackActivity";
     private static final int PICK_IMAGE = 100;
     private final List<Uri> imageList = new ArrayList<>();
+    ShakeBugService.Companion companion = ShakeBugService.Companion;
     private ShakeBugAdapter shakeBugAdapter;
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private float batteryLevel;
@@ -121,35 +122,32 @@ public class FeedbackActivity extends AppCompatActivity {
         });
         recyclerView.setAdapter(shakeBugAdapter);
 
-        //set view properties
-        ShakeBugService.Companion companion = ShakeBugService.Companion;
-
         Log.d(TAG, "getDeviceInfo: Extra Payload : " + companion.getExtraPayload());
 
-        linearLayout.setBackgroundColor(parseColorToInteger(companion.getPageBackgroundColor()));
+        linearLayout.setBackgroundColor(parseColorToInt(getOption("pageBackgroundColor")));
 
-        llAppbar.setBackgroundColor(parseColorToInteger(companion.getAppbarBackgroundColor()));
-        tvAppbarTitle.setText(companion.getAppbarTitleText());
-        tvAppbarTitle.setTextColor(parseColor(companion.getAppbarTitleColor()));
+        llAppbar.setBackgroundColor(parseColorToInt(getOption("appbarBackgroundColor")));
+        tvAppbarTitle.setText(getOption("appbarTitleText"));
+        tvAppbarTitle.setTextColor(parseColor(getOption("appbarTitleColor")));
 
-        tvTicketType.setText(companion.getTicketTypeLabelText());
-        tvTicketType.setTextColor(parseColor(companion.getLabelColor()));
+        tvTicketType.setText(getOption("ticketTypeLabelText"));
+        tvTicketType.setTextColor(parseColor(getOption("labelColor")));
 
-        tvDescription.setText(companion.getDescriptionLabelText());
-        tvDescription.setTextColor(parseColor(companion.getLabelColor()));
-        etDescription.setTextColor(parseColor(companion.getInputTextColor()));
+        tvDescription.setText(getOption("descriptionLabelText"));
+        tvDescription.setTextColor(parseColor(getOption("labelColor")));
+        etDescription.setTextColor(parseColor(getOption("inputTextColor")));
         InputFilter[] filters = new InputFilter[1];
-        filters[0] = new InputFilter.LengthFilter(companion.getDescriptionMaxLength());
+        filters[0] = new InputFilter.LengthFilter(getMaxLength());
         etDescription.setFilters(filters);
 
-        tilDescription.setCounterMaxLength(companion.getDescriptionMaxLength());
-        tilDescription.setCounterTextColor(parseColor(companion.getLabelColor()));
-        tilDescription.setPlaceholderText(companion.getDescriptionHintText());
-        tilDescription.setPlaceholderTextColor(parseColor(companion.getHintColor()));
+        tilDescription.setCounterMaxLength(getMaxLength());
+        tilDescription.setCounterTextColor(parseColor(getOption("labelColor")));
+        tilDescription.setPlaceholderText(getOption("descriptionHintText"));
+        tilDescription.setPlaceholderTextColor(parseColor(getOption("hintColor")));
 
-        btnSubmit.setText(companion.getButtonText());
-        btnSubmit.setTextColor(parseColor(companion.getButtonTextColor()));
-        btnSubmit.setBackgroundTintList(parseColor(companion.getButtonBackgroundColor()));
+        btnSubmit.setText(getOption("buttonText"));
+        btnSubmit.setTextColor(parseColor(getOption("buttonTextColor")));
+        btnSubmit.setBackgroundTintList(parseColor(getOption("buttonBackgroundColor")));
 
         // Retrieve image path from Intent extras
         Intent intent = getIntent();
@@ -201,6 +199,14 @@ public class FeedbackActivity extends AppCompatActivity {
         });
 
         getDeviceInfo();
+    }
+
+    private String getOption(String key) {
+        return String.valueOf(companion.getOptions().get(key));
+    }
+
+    private int getMaxLength() {
+        return (int) companion.getOptions().get("descriptionMaxLength");
     }
 
 
@@ -318,6 +324,8 @@ public class FeedbackActivity extends AppCompatActivity {
                     .setAppMemoryUsage(appMemoryUsage)
                     .setAppsOnAirSDKVersion(libVersionName)
                     .build();
+
+            Log.d(TAG, "getDeviceInfo: " + deviceInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -382,7 +390,7 @@ public class FeedbackActivity extends AppCompatActivity {
         return ColorStateList.valueOf(Color.parseColor(color));
     }
 
-    private Integer parseColorToInteger(String color) {
+    private int parseColorToInt(String color) {
         return Color.parseColor(color);
     }
 

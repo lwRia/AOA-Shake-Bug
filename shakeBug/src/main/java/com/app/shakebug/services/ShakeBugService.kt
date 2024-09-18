@@ -5,42 +5,91 @@ import android.graphics.Color
 
 class ShakeBugService {
     companion object {
-        private const val PAGE_BACKGROUND_COLOR: String = "#E8F1FF"
-        private const val APP_BAR_BACKGROUND_COLOR: String = "#E8F1FF"
-        private const val APP_BAR_TITLE_TEXT: String = "New Ticket"
-        private const val APP_BAR_TITLE_COLOR: String = "#000000"
-        private const val TICKET_TYPE_LABEL_TEXT: String = "Ticket Type"
-        private const val DESCRIPTION_LABEL_TEXT: String = "Description"
-        private const val DESCRIPTION_HINT_TEXT: String = "Add description here…"
-        private const val DESCRIPTION_MAX_LENGTH: Int = 255
-        private const val BUTTON_TEXT: String = "Submit"
-        private const val BUTTON_TEXT_COLOR: String = "#FFFFFF"
-        private const val BUTTON_BACKGROUND_COLOR: String = "#007AFF"
-        private const val LABEL_COLOR: String = "#000000"
-        private const val HINT_COLOR: String = "#B1B1B3"
-        private const val INPUT_TEXT_COLOR: String = "#000000"
+        //keys
+        private const val pageBackgroundColor = "pageBackgroundColor"
+        private const val appbarBackgroundColor = "appbarBackgroundColor"
+        private const val appbarTitleText = "appbarTitleText"
+        private const val appbarTitleColor = "appbarTitleColor"
+        private const val ticketTypeLabelText = "ticketTypeLabelText"
+        private const val descriptionLabelText = "descriptionLabelText"
+        private const val descriptionHintText = "descriptionHintText"
+        private const val descriptionMaxLength = "descriptionMaxLength"
+        private const val buttonText = "buttonText"
+        private const val buttonTextColor = "buttonTextColor"
+        private const val buttonBackgroundColor = "buttonBackgroundColor"
+        private const val labelColor = "labelColor"
+        private const val hintColor = "hintColor"
+        private const val inputTextColor = "inputTextColor"
 
-        var pageBackgroundColor: String = PAGE_BACKGROUND_COLOR
-        var appbarBackgroundColor: String = APP_BAR_BACKGROUND_COLOR
-        var appbarTitleText: String = APP_BAR_TITLE_TEXT
-        var appbarTitleColor: String = APP_BAR_TITLE_COLOR
-        var ticketTypeLabelText: String = TICKET_TYPE_LABEL_TEXT
-        var descriptionLabelText: String = DESCRIPTION_LABEL_TEXT
-        var descriptionHintText: String = DESCRIPTION_HINT_TEXT
-        var descriptionMaxLength: Int = DESCRIPTION_MAX_LENGTH
-        var buttonText: String = BUTTON_TEXT
-        var buttonTextColor: String = BUTTON_TEXT_COLOR
-        var buttonBackgroundColor: String = BUTTON_BACKGROUND_COLOR
-        var labelColor: String = LABEL_COLOR
-        var hintColor: String = HINT_COLOR
-        var inputTextColor: String = INPUT_TEXT_COLOR
-        var raiseNewTicket: Boolean = false
+        //values
+        private const val PAGE_BACKGROUND_COLOR = "#E8F1FF"
+        private const val APP_BAR_BACKGROUND_COLOR = "#E8F1FF"
+        private const val APP_BAR_TITLE_TEXT = "New Ticket"
+        private const val APP_BAR_TITLE_COLOR = "#000000"
+        private const val TICKET_TYPE_LABEL_TEXT = "Ticket Type"
+        private const val DESCRIPTION_LABEL_TEXT = "Description"
+        private const val DESCRIPTION_HINT_TEXT = "Add description here…"
+        private const val DESCRIPTION_MAX_LENGTH = 255
+        private const val BUTTON_TEXT = "Submit"
+        private const val BUTTON_TEXT_COLOR = "#FFFFFF"
+        private const val BUTTON_BACKGROUND_COLOR = "#007AFF"
+        private const val LABEL_COLOR = "#000000"
+        private const val HINT_COLOR = "#B1B1B3"
+        private const val INPUT_TEXT_COLOR = "#000000"
+
+        private val OPTIONS: Map<String, Any> = mutableMapOf(
+            pageBackgroundColor to PAGE_BACKGROUND_COLOR,
+            appbarBackgroundColor to APP_BAR_BACKGROUND_COLOR,
+            appbarTitleText to APP_BAR_TITLE_TEXT,
+            appbarTitleColor to APP_BAR_TITLE_COLOR,
+            ticketTypeLabelText to TICKET_TYPE_LABEL_TEXT,
+            descriptionLabelText to DESCRIPTION_LABEL_TEXT,
+            descriptionHintText to DESCRIPTION_HINT_TEXT,
+            descriptionMaxLength to DESCRIPTION_MAX_LENGTH,
+            buttonText to BUTTON_TEXT,
+            buttonTextColor to BUTTON_TEXT_COLOR,
+            buttonBackgroundColor to BUTTON_BACKGROUND_COLOR,
+            labelColor to LABEL_COLOR,
+            hintColor to HINT_COLOR,
+            inputTextColor to INPUT_TEXT_COLOR
+        )
+
+        private var raiseNewTicket: Boolean = false
         var extraPayload: Map<String, Any> = emptyMap()
+        var options: Map<String, Any> = OPTIONS.toMutableMap()
 
         private fun isValidColorHex(colorHex: String): Boolean {
             return try {
                 Color.parseColor(colorHex)
                 true
+            } catch (e: IllegalArgumentException) {
+                false
+            }
+        }
+
+        private fun String.isValidStringColor(mutableMap: Map<String, Any>): Boolean {
+            return try {
+                mutableMap.containsKey(this) &&
+                        mutableMap[this].toString().isNotEmpty() &&
+                        isValidColorHex(mutableMap[this].toString())
+            } catch (e: IllegalArgumentException) {
+                false
+            }
+        }
+
+        private fun String.isValidString(mutableMap: Map<String, Any>): Boolean {
+            return try {
+                mutableMap.containsKey(this) &&
+                        mutableMap[this].toString().isNotEmpty()
+            } catch (e: IllegalArgumentException) {
+                false
+            }
+        }
+
+        private fun String.isValidInt(mutableMap: Map<String, Any>): Boolean {
+            return try {
+                mutableMap.containsKey(this) &&
+                        mutableMap[this].toString().toInt() > 0
             } catch (e: IllegalArgumentException) {
                 false
             }
@@ -52,45 +101,44 @@ class ShakeBugService {
             context: Context,
             raiseNewTicket: Boolean = false,
             extraPayload: Map<String, Any> = emptyMap(),
-            pageBackgroundColor: String = PAGE_BACKGROUND_COLOR,
-            appbarBackgroundColor: String = APP_BAR_BACKGROUND_COLOR,
-            appbarTitleText: String = APP_BAR_TITLE_TEXT,
-            appbarTitleColor: String = APP_BAR_TITLE_COLOR,
-            ticketTypeLabelText: String = TICKET_TYPE_LABEL_TEXT,
-            descriptionLabelText: String = DESCRIPTION_LABEL_TEXT,
-            descriptionHintText: String = DESCRIPTION_HINT_TEXT,
-            descriptionMaxLength: Int = DESCRIPTION_MAX_LENGTH,
-            buttonText: String = BUTTON_TEXT,
-            buttonTextColor: String = BUTTON_TEXT_COLOR,
-            buttonBackgroundColor: String = BUTTON_BACKGROUND_COLOR,
-            labelColor: String = LABEL_COLOR,
-            hintColor: String = HINT_COLOR,
-            inputTextColor: String = INPUT_TEXT_COLOR,
+            options: Map<String, Any> = OPTIONS.toMutableMap(),
         ) {
-            Companion.pageBackgroundColor =
-                if (isValidColorHex(pageBackgroundColor)) pageBackgroundColor else PAGE_BACKGROUND_COLOR
-            Companion.appbarBackgroundColor =
-                if (isValidColorHex(appbarBackgroundColor)) appbarBackgroundColor else APP_BAR_BACKGROUND_COLOR
-            Companion.appbarTitleText = appbarTitleText
-            Companion.appbarTitleColor =
-                if (isValidColorHex(appbarTitleColor)) appbarTitleColor else APP_BAR_TITLE_COLOR
-            Companion.ticketTypeLabelText = ticketTypeLabelText
-            Companion.descriptionLabelText = descriptionLabelText
-            Companion.descriptionHintText = descriptionHintText
-            Companion.descriptionMaxLength = descriptionMaxLength
-            Companion.buttonText = buttonText
-            Companion.buttonTextColor =
-                if (isValidColorHex(buttonTextColor)) buttonTextColor else BUTTON_TEXT_COLOR
-            Companion.buttonBackgroundColor =
-                if (isValidColorHex(buttonBackgroundColor)) buttonBackgroundColor else BUTTON_BACKGROUND_COLOR
-            Companion.labelColor =
-                if (isValidColorHex(labelColor)) labelColor else LABEL_COLOR
-            Companion.hintColor =
-                if (isValidColorHex(hintColor)) hintColor else HINT_COLOR
-            Companion.inputTextColor =
-                if (isValidColorHex(inputTextColor)) inputTextColor else INPUT_TEXT_COLOR
+            val mutableMap = options.toMutableMap()
+            mutableMap[pageBackgroundColor] =
+                if (pageBackgroundColor.isValidStringColor(mutableMap))
+                    mutableMap[pageBackgroundColor].toString() else PAGE_BACKGROUND_COLOR
+            mutableMap[appbarBackgroundColor] =
+                if (appbarBackgroundColor.isValidStringColor(mutableMap))
+                    mutableMap[appbarBackgroundColor].toString() else APP_BAR_BACKGROUND_COLOR
+            mutableMap[appbarTitleText] = if (appbarTitleText.isValidString(mutableMap))
+                mutableMap[appbarTitleText].toString() else APP_BAR_TITLE_TEXT
+            mutableMap[appbarTitleColor] = if (appbarTitleColor.isValidStringColor(mutableMap))
+                mutableMap[appbarTitleColor].toString() else APP_BAR_TITLE_COLOR
+            mutableMap[ticketTypeLabelText] = if (ticketTypeLabelText.isValidString(mutableMap))
+                mutableMap[ticketTypeLabelText].toString() else TICKET_TYPE_LABEL_TEXT
+            mutableMap[descriptionLabelText] = if (descriptionLabelText.isValidString(mutableMap))
+                mutableMap[descriptionLabelText].toString() else DESCRIPTION_LABEL_TEXT
+            mutableMap[descriptionHintText] = if (descriptionHintText.isValidString(mutableMap))
+                mutableMap[descriptionHintText].toString() else DESCRIPTION_HINT_TEXT
+            mutableMap[descriptionMaxLength] = if (descriptionMaxLength.isValidInt(mutableMap))
+                mutableMap[descriptionMaxLength].toString().toInt() else DESCRIPTION_MAX_LENGTH
+            mutableMap[buttonText] = if (buttonText.isValidString(mutableMap))
+                mutableMap[buttonText].toString() else BUTTON_TEXT
+            mutableMap[buttonTextColor] = if (buttonTextColor.isValidStringColor(mutableMap))
+                mutableMap[buttonTextColor].toString() else BUTTON_TEXT_COLOR
+            mutableMap[buttonBackgroundColor] =
+                if (buttonBackgroundColor.isValidStringColor(mutableMap))
+                    mutableMap[buttonBackgroundColor].toString() else BUTTON_BACKGROUND_COLOR
+            mutableMap[labelColor] = if (labelColor.isValidStringColor(mutableMap))
+                mutableMap[labelColor].toString() else LABEL_COLOR
+            mutableMap[hintColor] = if (hintColor.isValidStringColor(mutableMap))
+                mutableMap[hintColor].toString() else HINT_COLOR
+            mutableMap[inputTextColor] = if (inputTextColor.isValidStringColor(mutableMap))
+                mutableMap[inputTextColor].toString() else INPUT_TEXT_COLOR
+
             Companion.raiseNewTicket = raiseNewTicket
             Companion.extraPayload = extraPayload
+            Companion.options = mutableMap
             if (raiseNewTicket) {
                 AppsOnAirServices.raiseNewTicket(context)
             } else {
