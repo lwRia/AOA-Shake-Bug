@@ -31,6 +31,10 @@
     <string name="select_picture">Select Picture</string>
     <string name="save_image_alert_msg">To save this image, please allow required permission from setting.</string>
     <string name="error_something_wrong">ERROR : Something went wrong, please verify meta-data in your project\'s manifest!\nFor more info : https://documentation.appsonair.com/Mobile-Quickstart/android-sdk-setup</string>
+    <string name="add_image">Add Image</string>
+    <string name="close_screen">Close Screen</string>
+    <string name="image">Image</string>
+    <string name="remove_image">Remove Image</string>
 
     <string-array name="photo_editor_emoji">
 

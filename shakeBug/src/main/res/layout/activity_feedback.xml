@@ -37,6 +37,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_weight="1"
+            android:contentDescription="@string/close_screen"
             android:src="@drawable/img_fill_close" />
     </LinearLayout>
 
@@ -93,7 +94,8 @@
                         app:spinner_popup_background="@drawable/rounded_spinner"
                         app:spinner_popup_elevation="12dp"
                         app:spinner_popup_height="100dp"
-                        app:spinner_popup_padding="10dp" />
+                        app:spinner_popup_padding="10dp"
+                        tools:ignore="SpeakableTextPresentCheck" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -135,7 +137,8 @@
                         android:lines="6"
                         android:maxLength="255"
                         android:textColor="@color/black"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:ignore="TextContrastCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
@@ -166,6 +169,7 @@
                         android:layout_height="40dp"
                         android:layout_gravity="center"
                         android:layout_marginEnd="16dp"
+                        android:contentDescription="@string/add_image"
                         android:src="@drawable/img_plus" />
                 </LinearLayout>
             </HorizontalScrollView>
@@ -177,7 +181,8 @@
                 android:gravity="center"
                 android:text="@string/run_on_apps_on_air"
                 android:textColor="@color/button_color"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:ignore="TextContrastCheck" />
         </LinearLayout>
     </ScrollView>
 
@@ -191,6 +196,7 @@
         android:backgroundTint="@color/button_color"
         android:text="@string/submit"
         android:textAllCaps="false"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        tools:ignore="TextContrastCheck" />
 
 </LinearLayout>

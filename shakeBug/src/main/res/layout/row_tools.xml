@@ -11,5 +11,6 @@
         android:id="@+id/img_tool"
         android:layout_width="20dp"
         android:layout_height="20dp"
+        android:contentDescription="@string/label_shape"
         tools:src="@drawable/ic_oval" />
 </LinearLayout>

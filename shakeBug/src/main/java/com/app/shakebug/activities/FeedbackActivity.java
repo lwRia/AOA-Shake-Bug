@@ -87,7 +87,6 @@ public class FeedbackActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
-
         NetworkService.checkConnectivity(this, isAvailable -> hasNetwork = isAvailable);
 
         //init views
