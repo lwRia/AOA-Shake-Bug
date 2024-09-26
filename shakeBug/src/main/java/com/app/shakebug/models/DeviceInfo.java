@@ -6,7 +6,6 @@ public class DeviceInfo {
     final String deviceBatteryLevel;
     final String deviceScreenSize;
     final String deviceOrientation;
-    final String environment;
     final String deviceRegionCode;
     final String deviceRegionName;
     final String timestamp;
@@ -19,6 +18,7 @@ public class DeviceInfo {
     final String deviceMemory;
     final String appMemoryUsage;
     final String appsOnAirSDKVersion;
+    final String networkState;
 
     private DeviceInfo(Builder builder) {
         this.deviceModel = builder.deviceModel;
@@ -26,7 +26,6 @@ public class DeviceInfo {
         this.deviceBatteryLevel = builder.deviceBatteryLevel;
         this.deviceScreenSize = builder.deviceScreenSize;
         this.deviceOrientation = builder.deviceOrientation;
-        this.environment = builder.environment;
         this.deviceRegionCode = builder.deviceRegionCode;
         this.deviceRegionName = builder.deviceRegionName;
         this.timestamp = builder.timestamp;
@@ -39,6 +38,79 @@ public class DeviceInfo {
         this.deviceMemory = builder.deviceMemory;
         this.appMemoryUsage = builder.appMemoryUsage;
         this.appsOnAirSDKVersion = builder.appsOnAirSDKVersion;
+        this.networkState = builder.networkState;
+    }
+
+    public String getDeviceModel() {
+        return deviceModel;
+    }
+
+    public String getDeviceOsVersion() {
+        return deviceOsVersion;
+    }
+
+    public String getDeviceBatteryLevel() {
+        return deviceBatteryLevel;
+    }
+
+    public String getDeviceScreenSize() {
+        return deviceScreenSize;
+    }
+
+    public String getDeviceOrientation() {
+        return deviceOrientation;
+    }
+
+    public String getDeviceRegionCode() {
+        return deviceRegionCode;
+    }
+
+    public String getDeviceRegionName() {
+        return deviceRegionName;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public String getBuildVersionNumber() {
+        return buildVersionNumber;
+    }
+
+    public String getReleaseVersionNumber() {
+        return releaseVersionNumber;
+    }
+
+    public String getBundleIdentifier() {
+        return bundleIdentifier;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public String getDeviceUsedStorage() {
+        return deviceUsedStorage;
+    }
+
+    public String getDeviceTotalStorage() {
+        return deviceTotalStorage;
+    }
+
+    public String getDeviceMemory() {
+        return deviceMemory;
+    }
+
+    public String getAppMemoryUsage() {
+        return appMemoryUsage;
+    }
+
+    public String getAppsOnAirSDKVersion() {
+        return appsOnAirSDKVersion;
+    }
+
+    public String getNetworkState() {
+        return networkState;
     }
 
     public static class Builder {
@@ -47,7 +119,6 @@ public class DeviceInfo {
         private String deviceBatteryLevel;
         private String deviceScreenSize;
         private String deviceOrientation;
-        private String environment;
         private String deviceRegionCode;
         private String deviceRegionName;
         private String timestamp;
@@ -60,6 +131,7 @@ public class DeviceInfo {
         private String deviceMemory;
         private String appMemoryUsage;
         private String appsOnAirSDKVersion;
+        private String networkState;
 
         public Builder setDeviceModel(String deviceModel) {
             this.deviceModel = deviceModel;
@@ -83,11 +155,6 @@ public class DeviceInfo {
 
         public Builder setDeviceOrientation(String deviceOrientation) {
             this.deviceOrientation = deviceOrientation;
-            return this;
-        }
-
-        public Builder setEnvironment(String environment) {
-            this.environment = environment;
             return this;
         }
 
@@ -150,6 +217,12 @@ public class DeviceInfo {
             this.appsOnAirSDKVersion = appsOnAirSDKVersion;
             return this;
         }
+
+        public Builder setNetworkState(String networkState) {
+            this.networkState = networkState;
+            return this;
+        }
+
 
         public DeviceInfo build() {
             return new DeviceInfo(this);

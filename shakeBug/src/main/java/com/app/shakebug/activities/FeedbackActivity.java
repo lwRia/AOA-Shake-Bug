@@ -13,6 +13,8 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -31,7 +33,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -42,6 +46,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.aoacore.services.CoreService;
 import com.app.aoacore.services.NetworkService;
+import com.app.shakebug.BuildConfig;
 import com.app.shakebug.R;
 import com.app.shakebug.adapters.ShakeBugAdapter;
 import com.app.shakebug.interfaces.OnItemClickListener;
@@ -52,15 +57,27 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.skydoves.powerspinner.OnSpinnerItemSelectedListener;
 import com.skydoves.powerspinner.PowerSpinnerView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
+
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class FeedbackActivity extends AppCompatActivity {
 
@@ -68,6 +85,9 @@ public class FeedbackActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 100;
     private final List<Uri> imageList = new ArrayList<>();
     ShakeBugService.Companion companion = ShakeBugService.Companion;
+    String ticketType;
+    DeviceInfo deviceInfo;
+    ProgressBar progressBar;
     private ShakeBugAdapter shakeBugAdapter;
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private float batteryLevel;
@@ -77,7 +97,6 @@ public class FeedbackActivity extends AppCompatActivity {
             int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
             int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
             batteryLevel = level * 100 / (float) scale;
-            Log.d(TAG, "getDeviceInfo: Battery level : " + batteryLevel);
         }
     };
     private String screenOrientation;
@@ -92,6 +111,7 @@ public class FeedbackActivity extends AppCompatActivity {
         //init views
         LinearLayout linearLayout = findViewById(R.id.ll_main);
         LinearLayout llAppbar = findViewById(R.id.ll_appbar);
+        progressBar = findViewById(R.id.progress_bar);
 
         TextView tvAppbarTitle = findViewById(R.id.tv_appbar_title);
         TextView tvTicketType = findViewById(R.id.tv_ticket_type);
@@ -120,8 +140,6 @@ public class FeedbackActivity extends AppCompatActivity {
             }
         });
         recyclerView.setAdapter(shakeBugAdapter);
-
-        Log.d(TAG, "getDeviceInfo: Extra Payload : " + companion.getExtraPayload());
 
         linearLayout.setBackgroundColor(parseColorToInt(getOption("pageBackgroundColor")));
 
@@ -163,8 +181,8 @@ public class FeedbackActivity extends AppCompatActivity {
         imgAdd.setOnClickListener(view -> openGallery());
 
         spinner.selectItemByIndex(0);
-        spinner.setOnSpinnerItemSelectedListener((OnSpinnerItemSelectedListener<String>) (oldIndex, oldItem, newIndex, newItem) -> {
-        });
+        ticketType = getResources().getStringArray(R.array.ticket_type_array)[0];
+        spinner.setOnSpinnerItemSelectedListener((OnSpinnerItemSelectedListener<String>) (oldIndex, oldItem, newIndex, newItem) -> ticketType = newItem);
 
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK && result.getData() != null) {
@@ -190,6 +208,8 @@ public class FeedbackActivity extends AppCompatActivity {
                         Log.d(TAG, "AOAShakeBug AppId: " + getString(R.string.error_something_wrong));
                     } else {
                         Log.d(TAG, "AOAShakeBug AppId: " + appId);
+                        progressBar.setVisibility(View.VISIBLE);
+                        submitFeedback(appId, description);
                     }
                 } else {
                     Log.d(TAG, "AOAShakeBug : Please check your internet connection!");
@@ -221,27 +241,11 @@ public class FeedbackActivity extends AppCompatActivity {
             String versionName = packageInfo.versionName;
             int versionCode = packageInfo.versionCode;
 
-            Log.d(TAG, "getDeviceInfo: Version name : " + versionName);
-            Log.d(TAG, "getDeviceInfo: Version code : " + versionCode);
-            Log.d(TAG, "getDeviceInfo: App name : " + appName);
-            Log.d(TAG, "getDeviceInfo: Package name : " + packageName);
-
-            Log.d(TAG, "getDeviceInfo: Model : " + Build.DEVICE);
-            Log.d(TAG, "getDeviceInfo: Manufacture : " + Build.MANUFACTURER);
-            Log.d(TAG, "getDeviceInfo: Brand : " + Build.BRAND);
-            Log.d(TAG, "getDeviceInfo: Release : " + Build.VERSION.RELEASE);
-            Log.d(TAG, "getDeviceInfo: SDK version : " + Build.VERSION.SDK_INT);
-
             Locale locale = getResources().getConfiguration().getLocales().get(0);
-
-            Log.d(TAG, "getDeviceInfo: Country name : " + locale.getDisplayCountry());
-            Log.d(TAG, "getDeviceInfo: Country code : " + locale.getCountry());
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", Locale.getDefault());
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date now = new Date();
-
-            Log.d(TAG, "getDeviceInfo: Current timestamp : " + sdf.format(now));
 
             this.registerReceiver(this.batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
@@ -263,8 +267,6 @@ public class FeedbackActivity extends AppCompatActivity {
                 screenWidth = displayMetrics.widthPixels;
                 screenHeight = displayMetrics.heightPixels;
             }
-            Log.d(TAG, "getDeviceInfo: Width : " + screenWidth + " pixels");
-            Log.d(TAG, "getDeviceInfo: Height : " + screenHeight + " pixels");
 
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -272,16 +274,11 @@ public class FeedbackActivity extends AppCompatActivity {
             } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 screenOrientation = "Landscape";
             }
-            Log.d(TAG, "getDeviceInfo: Orientation : " + screenOrientation);
 
             String usedStorage = getReadableStorageSize(getTotalStorageSize(this, false));
-            Log.d(TAG, "getDeviceInfo: Used storage : " + usedStorage);
             String totalStorage = getReadableStorageSize(getTotalStorageSize(this, true));
-            Log.d(TAG, "getDeviceInfo: Total storage : " + totalStorage);
             String totalMemory = getReadableStorageSize(getAvailableMemory().totalMem);
-            Log.d(TAG, "getDeviceInfo: Total memory : " + totalMemory);
             String availableMemory = getReadableStorageSize(getAvailableMemory().availMem);
-            Log.d(TAG, "getDeviceInfo: Available memory : " + availableMemory);
 
             ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
             List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = activityManager.getRunningAppProcesses();
@@ -293,23 +290,27 @@ public class FeedbackActivity extends AppCompatActivity {
                     android.os.Debug.MemoryInfo memoryInfo = memoryInfoArray[0];
                     int totalPss = memoryInfo.getTotalPss();
                     appMemoryUsage = getReadableStorageSize((long) totalPss * 1024);
-                    Log.d(TAG, "getDeviceInfo: AppMemoryUsage : " + appMemoryUsage);
                     break;
                 }
             }
 
-            String libVersionName = com.app.shakebug.BuildConfig.VERSION_NAME;
-            String libVersionCode = com.app.shakebug.BuildConfig.VERSION_CODE;
-            Log.d(TAG, "getDeviceInfo: AppsOnAirVersion : " + libVersionName);
-            Log.d(TAG, "getDeviceInfo: AppsOnAirVersion : " + libVersionCode);
+            String libVersionName = BuildConfig.VERSION_NAME;
+            String libVersionCode = BuildConfig.VERSION_CODE;
 
-            DeviceInfo deviceInfo = new DeviceInfo.Builder()
+            ConnectivityManager connectivityManager =
+                    (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            String networkState = "";
+            if (connectivityManager != null) {
+                NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                networkState = activeNetworkInfo.getTypeName();
+            }
+
+            deviceInfo = new DeviceInfo.Builder()
                     .setDeviceModel(Build.BRAND + " " + Build.MODEL)
                     .setDeviceOsVersion(Build.VERSION.RELEASE)
                     .setDeviceBatteryLevel(String.valueOf(batteryLevel))
-                    .setDeviceScreenSize(screenWidth + "X" + screenHeight + " px")
+                    .setDeviceScreenSize(screenWidth + "x" + screenHeight + " px")
                     .setDeviceOrientation(screenOrientation)
-                    .setEnvironment("Development")
                     .setDeviceRegionCode(locale.getCountry())
                     .setDeviceRegionName(locale.getDisplayCountry())
                     .setTimestamp(sdf.format(now))
@@ -322,9 +323,8 @@ public class FeedbackActivity extends AppCompatActivity {
                     .setDeviceMemory(totalMemory)
                     .setAppMemoryUsage(appMemoryUsage)
                     .setAppsOnAirSDKVersion(libVersionName)
+                    .setNetworkState(networkState)
                     .build();
-
-            Log.d(TAG, "getDeviceInfo: " + deviceInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -396,5 +396,85 @@ public class FeedbackActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    public void submitFeedback(String appId, String description) {
+        final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            JSONObject whereObject = new JSONObject();
+            whereObject.put("appId", appId);
+
+            JSONObject dataObject = new JSONObject();
+
+            JSONObject metaDataObject = new JSONObject(companion.getExtraPayload());
+            dataObject.put("additionalMetadata", metaDataObject);
+            dataObject.put("description", description);
+            dataObject.put("type", ticketType);
+
+            Map<String, Object> mapData = new HashMap<>();
+
+            mapData.put("deviceModel", deviceInfo.getDeviceModel());
+            mapData.put("deviceUsedStorage", deviceInfo.getDeviceUsedStorage());
+            mapData.put("deviceTotalStorage", deviceInfo.getDeviceTotalStorage());
+            mapData.put("deviceMemory", deviceInfo.getDeviceMemory());
+            mapData.put("appMemoryUsage", deviceInfo.getAppMemoryUsage());
+            mapData.put("deviceOrientation", deviceInfo.getDeviceOrientation());
+            mapData.put("buildVersionNumber", deviceInfo.getBuildVersionNumber());
+            mapData.put("deviceOsVersion", deviceInfo.getDeviceOsVersion());
+            mapData.put("deviceRegionCode", deviceInfo.getDeviceRegionCode());
+            mapData.put("deviceBatteryLevel", deviceInfo.getDeviceBatteryLevel());
+            mapData.put("deviceScreenSize", deviceInfo.getDeviceScreenSize());
+            mapData.put("deviceRegionName", deviceInfo.getDeviceRegionName());
+            mapData.put("appName", deviceInfo.getAppName());
+            mapData.put("releaseVersionNumber", deviceInfo.getReleaseVersionNumber());
+            mapData.put("timestamp", deviceInfo.getTimestamp());
+            mapData.put("appsOnAirSDKVersion", deviceInfo.getAppsOnAirSDKVersion());
+            mapData.put("networkState", deviceInfo.getNetworkState());
+            JSONObject deviceObject = new JSONObject(mapData);
+            dataObject.put("deviceInfo", deviceObject);
+
+            dataObject.put("attachments", appId);
+
+            jsonObject.put("where", whereObject);
+            jsonObject.put("data", dataObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+        Request request = new Request.Builder()
+                .url(BuildConfig.BASE_URL)
+                .method("POST", body)
+                .build();
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.d("Failure : ", String.valueOf(e));
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                progressBar.setVisibility(View.GONE);
+                try {
+                    if (response.code() == 200) {
+                        Toast.makeText(FeedbackActivity.this, "Your feedback submitted successfully!", Toast.LENGTH_LONG).show();
+                    } else {
+                        String myResponse = response.body().string();
+                        JSONObject jsonObject = new JSONObject(myResponse);
+                        String message = jsonObject.getString("message");
+                        Toast.makeText(FeedbackActivity.this, message, Toast.LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("Failure : ", String.valueOf(e.getMessage()));
+                }
+
+            }
+        });
     }
 }
