@@ -223,7 +223,6 @@ public class DeviceInfo {
             return this;
         }
 
-
         public DeviceInfo build() {
             return new DeviceInfo(this);
         }

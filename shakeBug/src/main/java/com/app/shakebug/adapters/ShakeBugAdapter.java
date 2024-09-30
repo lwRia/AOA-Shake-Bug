@@ -11,15 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.shakebug.R;
 import com.app.shakebug.interfaces.OnItemClickListener;
+import com.app.shakebug.models.ImageData;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
 public class ShakeBugAdapter extends RecyclerView.Adapter<ShakeBugAdapter.ViewHolder> {
-    private final List<Uri> imageList;
+    private final List<ImageData> imageList;
     private final OnItemClickListener onItemClickListener;
 
-    public ShakeBugAdapter(List<Uri> imageList, OnItemClickListener onItemClickListener) {
+    public ShakeBugAdapter(List<ImageData> imageList, OnItemClickListener onItemClickListener) {
         this.imageList = imageList;
         this.onItemClickListener = onItemClickListener;
     }
@@ -33,7 +34,7 @@ public class ShakeBugAdapter extends RecyclerView.Adapter<ShakeBugAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Uri imagePath = imageList.get(position);
+        Uri imagePath = imageList.get(position).getImageUri();
 
         Glide.with(holder.itemView.getContext())
                 .load(imagePath)

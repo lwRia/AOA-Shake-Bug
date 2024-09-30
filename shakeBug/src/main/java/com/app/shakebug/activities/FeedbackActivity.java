@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.usage.StorageStatsManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -12,6 +13,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -22,6 +24,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.text.InputFilter;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -30,6 +33,7 @@ import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,6 +55,7 @@ import com.app.shakebug.R;
 import com.app.shakebug.adapters.ShakeBugAdapter;
 import com.app.shakebug.interfaces.OnItemClickListener;
 import com.app.shakebug.models.DeviceInfo;
+import com.app.shakebug.models.ImageData;
 import com.app.shakebug.services.ShakeBugService;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -60,7 +65,9 @@ import com.skydoves.powerspinner.PowerSpinnerView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,7 +90,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
     private static final String TAG = "FeedbackActivity";
     private static final int PICK_IMAGE = 100;
-    private final List<Uri> imageList = new ArrayList<>();
+    private final List<ImageData> imageList = new ArrayList<>();
     ShakeBugService.Companion companion = ShakeBugService.Companion;
     String ticketType;
     DeviceInfo deviceInfo;
@@ -171,7 +178,14 @@ public class FeedbackActivity extends AppCompatActivity {
         if (intent != null && intent.hasExtra("IMAGE_PATH")) {
             Uri imagePath = intent.getParcelableExtra("IMAGE_PATH");
             if (imagePath != null) {
-                imageList.add(imagePath);
+                String fileName = getFileName(imagePath);
+                String fileType = getFileType(imagePath);
+                ImageData imageData = new ImageData.Builder()
+                        .setImageUri(imagePath)
+                        .setFileName(fileName)
+                        .setFileType(fileType)
+                        .build();
+                imageList.add(imageData);
                 shakeBugAdapter.notifyItemInserted(imageList.size() - 1);
             }
         }
@@ -187,7 +201,14 @@ public class FeedbackActivity extends AppCompatActivity {
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                 Uri selectedImage = result.getData().getData();
-                imageList.add(selectedImage);
+                String fileName = getFileName(selectedImage);
+                String fileType = getFileType(selectedImage);
+                ImageData imageData = new ImageData.Builder()
+                        .setImageUri(selectedImage)
+                        .setFileName(fileName)
+                        .setFileType(fileType)
+                        .build();
+                imageList.add(imageData);
                 if (imageList.size() > 1) {
                     imgAdd.setVisibility(View.GONE);
                 }
@@ -227,7 +248,6 @@ public class FeedbackActivity extends AppCompatActivity {
     private int getMaxLength() {
         return (int) companion.getOptions().get("descriptionMaxLength");
     }
-
 
     private void getDeviceInfo() {
         try {
@@ -398,7 +418,157 @@ public class FeedbackActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    result = cursor.getString(nameIndex);
+                }
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
+        }
+
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+
+    private String getFileType(Uri uri) {
+        String mimeType;
+        if (uri.getScheme().equals("content")) {
+            mimeType = getContentResolver().getType(uri);
+        } else {
+            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
+        }
+        return mimeType;
+    }
+
+    public void getUploadImageURL() {
+        for (int i = 0; i < imageList.size(); i++) {
+            ImageData imageData = imageList.get(i);
+            final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("fileName", imageData.getFileName());
+                jsonObject.put("fileType", imageData.getFileType());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+            Request request = new Request.Builder()
+                    .url(BuildConfig.BASE_URL)
+                    .method("POST", body)
+                    .build();
+            client.newCall(request).enqueue(new okhttp3.Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.d("Failure : ", String.valueOf(e));
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) {
+                    try {
+                        if (response.code() == 200) {
+                            imageUpload("", imageData);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.d("Failure : ", String.valueOf(e.getMessage()));
+                    }
+                }
+            });
+        }
+    }
+
+    public byte[] getBytesFromUri(ContentResolver contentResolver, Uri uri) throws IOException {
+        InputStream inputStream = null;
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        try {
+            inputStream = contentResolver.openInputStream(uri);
+            if (inputStream == null) {
+                return null;
+            }
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, len);
+            }
+            return byteArrayOutputStream.toByteArray();
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (byteArrayOutputStream != null) {
+                byteArrayOutputStream.close();
+            }
+        }
+    }
+
+    public void imageUpload(String url, ImageData imageData) {
+        final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("imageUrl", url);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            byte[] imageBytes = getBytesFromUri(getContentResolver(), imageData.getImageUri());
+            if (imageBytes != null) {
+                RequestBody body = RequestBody.create(imageBytes, JSON);
+                Request request = new Request.Builder()
+                        .url(BuildConfig.BASE_URL)
+                        .method("POST", body)
+                        .build();
+                client.newCall(request).enqueue(new okhttp3.Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.d("Failure : ", String.valueOf(e));
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) {
+                        try {
+                            if (response.code() == 200) {
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.d("Failure : ", String.valueOf(e.getMessage()));
+                        }
+                    }
+                });
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void submitFeedback(String appId, String description) {
+        if (!imageList.isEmpty()) {
+            getUploadImageURL();
+        }
         final MediaType JSON = MediaType.get("application/json; charset=utf-8");
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -473,7 +643,6 @@ public class FeedbackActivity extends AppCompatActivity {
                     e.printStackTrace();
                     Log.d("Failure : ", String.valueOf(e.getMessage()));
                 }
-
             }
         });
     }
