@@ -1,11 +1,9 @@
 package com.app.shakebug.activities
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.ImageDecoder
@@ -21,12 +19,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.RequiresPermission
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.shakebug.R
@@ -44,18 +38,15 @@ import com.app.shakebug.enums.ToolType.REDO
 import com.app.shakebug.enums.ToolType.SHAPE
 import com.app.shakebug.enums.ToolType.TEXT
 import com.app.shakebug.enums.ToolType.UNDO
-import com.app.shakebug.services.FileSaveHelper
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener
 import ja.burhanrashid52.photoeditor.PhotoEditor
 import ja.burhanrashid52.photoeditor.PhotoEditorView
-import ja.burhanrashid52.photoeditor.SaveFileResult
 import ja.burhanrashid52.photoeditor.SaveSettings
 import ja.burhanrashid52.photoeditor.TextStyleBuilder
 import ja.burhanrashid52.photoeditor.ViewType
 import ja.burhanrashid52.photoeditor.shape.ShapeBuilder
 import ja.burhanrashid52.photoeditor.shape.ShapeType
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -78,8 +69,6 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
 
     @VisibleForTesting
     var mSaveImageUri: Uri? = null
-
-    private lateinit var mSaveFileHelper: FileSaveHelper
 
     override fun onDestroy() {
         super.onDestroy()
@@ -120,7 +109,6 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
         mPhotoEditorView.layoutParams = layoutParams
 
         mPhotoEditor.setOnPhotoEditorListener(this)
-        mSaveFileHelper = FileSaveHelper(this)
 
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -212,74 +200,52 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
         }
     }
 
+    private fun saveImageToCache(context: Context, bitmap: Bitmap, fileName: String): File? {
+        val cacheDir = context.cacheDir
+        val file = File(cacheDir, fileName)
+        return try {
+            val fos = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+            fos.flush()
+            fos.close()
+            file
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
+    }
 
-    @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
+    private fun getBitmapFromView(view: View): Bitmap {
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        return bitmap
+    }
+
     private fun saveImage() {
+        showLoading(getString(R.string.please_wait))
+        SaveSettings.Builder().setClearViewsEnabled(true)
+            .setTransparencyEnabled(true).build()
+        mPhotoEditor.clearHelperBox()
         val fileName = System.currentTimeMillis().toString() + ".png"
-        val hasStoragePermission = ContextCompat.checkSelfPermission(
-            this, Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
-        if (hasStoragePermission || FileSaveHelper.isSdkHigherThan28()) {
-            showLoading(getString(R.string.please_wait))
-            mSaveFileHelper.createFile(fileName, object : FileSaveHelper.OnFileCreateResult {
-
-                @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
-                override fun onFileCreateResult(
-                    created: Boolean, filePath: String?, error: String?, uri: Uri?
-                ) {
-                    lifecycleScope.launch {
-                        if (created && filePath != null) {
-                            val saveSettings = SaveSettings.Builder().setClearViewsEnabled(true)
-                                .setTransparencyEnabled(true).build()
-
-                            val result = mPhotoEditor.saveAsFile(filePath, saveSettings)
-
-                            if (result is SaveFileResult.Success) {
-                                mSaveFileHelper.notifyThatFileIsNowPubliclyAvailable(contentResolver)
-                                hideLoading()
-                                showSnackbar(getString(R.string.image_saved_successfully))
-                                mSaveImageUri = uri
-                                mPhotoEditorView.source.setImageURI(mSaveImageUri)
-                                sendFeedback(uri)
-                            } else {
-                                hideLoading()
-                                showSnackbar(getString(R.string.failed_to_save_image))
-                                sendFeedback(uri)
-                            }
-                        } else {
-                            hideLoading()
-                            showSnackbar(getString(R.string.failed_to_save_image))
-                            sendFeedback(uri)
-                        }
-                    }
-                }
-            })
+        val bitmap = getBitmapFromView(mPhotoEditorView)
+        val savedFile = saveImageToCache(this, bitmap, fileName)
+        val uri = Uri.fromFile(savedFile)
+        if (savedFile != null) {
+            hideLoading()
+            showSnackbar(getString(R.string.image_saved_successfully))
+            mSaveImageUri = uri
+            mPhotoEditorView.source.setImageURI(mSaveImageUri)
+            goToRemarkActivity(uri)
         } else {
-            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            hideLoading()
+            showSnackbar(getString(R.string.failed_to_save_image))
+            goToRemarkActivity(uri)
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.isNotEmpty()) {
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                ) {
-                    showSystemDialog()
-                }
-            }
-        }
-    }
-
-    private fun sendFeedback(imageUri: Uri?) {
-        val intent = Intent(this, FeedbackActivity::class.java)
+    private fun goToRemarkActivity(imageUri: Uri?) {
+        val intent = Intent(this, RemarkActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.putExtra("IMAGE_PATH", imageUri)
         startActivity(intent)
@@ -330,13 +296,6 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
     }
 
     @SuppressLint("MissingPermission")
-    override fun isPermissionGranted(isGranted: Boolean, permission: String?) {
-        if (isGranted) {
-            saveImage()
-        }
-    }
-
-    @SuppressLint("MissingPermission")
     private fun showSaveDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setMessage(getString(R.string.msg_save_image))
@@ -384,7 +343,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
             return
         }
         val imageUri = Uri.fromFile(imageFile)
-        sendFeedback(imageUri)
+        goToRemarkActivity(imageUri)
     }
 
     private fun getCurrentDateTimeString(): String {

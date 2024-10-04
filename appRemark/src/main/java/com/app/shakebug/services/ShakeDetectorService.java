@@ -16,7 +16,7 @@ import android.view.View;
 
 import com.app.shakebug.R;
 import com.app.shakebug.activities.EditImageActivity;
-import com.app.shakebug.activities.FeedbackActivity;
+import com.app.shakebug.activities.RemarkActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,12 +26,12 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
-public class AppsOnAirServices {
+public class ShakeDetectorService {
 
-    private static final String TAG = "AppsOnAirServices";
+    private static final String TAG = "ShakeDetectorService";
     private static float mAccel, mAccelCurrent, mAccelLast;
 
-    public static void shakeBug(Context context) {
+    public static void shakeDetect(Context context) {
         SensorManager mSensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
         Objects.requireNonNull(mSensorManager).registerListener(new SensorEventListener() {
             @Override
@@ -80,8 +80,9 @@ public class AppsOnAirServices {
         context.startActivity(intent);
     }
 
-    static void raiseNewTicket(Context context) {
-        Intent intent = new Intent(context, FeedbackActivity.class);
+    static void addRemarkManually(Context context) {
+        Log.d(TAG, "addRemarkManually: ");
+        Intent intent = new Intent(context, RemarkActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }

@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.app.shakebug.services.ShakeBugService
+import com.app.shakebug.services.AppRemarkService
 import com.example.shakebug.ui.theme.ShakeBugTheme
 
 class MainActivity : ComponentActivity() {
@@ -53,10 +53,8 @@ class MainActivity : ComponentActivity() {
                                 contentColor = Color.Black
                             ),
                             onClick = {
-                                ShakeBugService.shakeBug(
+                                AppRemarkService.addRemark(
                                     this@MainActivity,
-                                    raiseNewTicket = true,
-                                    options = mutableMapOf("pageBackgroundColor" to "#FFFFC5"),
                                     extraPayload = mapOf(
                                         "city" to "Surat",
                                         "state" to "Gujarat",
@@ -74,6 +72,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        ShakeBugService.shakeBug(this)
+        AppRemarkService.initialize(
+            this,
+            options = mutableMapOf("pageBackgroundColor" to "#FFFFC5"),
+        )
+        // AppRemarkService.initialize( options = mutableMapOf("pageBackgroundColor" to "#FFFFC5"), shakeGestureEnable = false)
     }
 }

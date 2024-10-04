@@ -21,7 +21,7 @@
     <string name="done">Done</string>
     <string name="opacity">Opacity</string>
     <string name="please_wait">Please wait…</string>
-    <string name="failed_to_save_image">Failed to save Image</string>
+    <string name="failed_to_save_image">Failed to save image!</string>
     <string name="image_saved_successfully">Image saved successfully!</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>

@@ -52,11 +52,11 @@ import com.app.aoacore.services.CoreService;
 import com.app.aoacore.services.NetworkService;
 import com.app.shakebug.BuildConfig;
 import com.app.shakebug.R;
-import com.app.shakebug.adapters.ShakeBugAdapter;
+import com.app.shakebug.adapters.ImageAdapter;
 import com.app.shakebug.interfaces.OnItemClickListener;
 import com.app.shakebug.models.DeviceInfo;
 import com.app.shakebug.models.ImageData;
-import com.app.shakebug.services.ShakeBugService;
+import com.app.shakebug.services.AppRemarkService;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.skydoves.powerspinner.OnSpinnerItemSelectedListener;
@@ -86,16 +86,16 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class FeedbackActivity extends AppCompatActivity {
+public class RemarkActivity extends AppCompatActivity {
 
-    private static final String TAG = "FeedbackActivity";
+    private static final String TAG = "RemarkActivity";
     private static final int PICK_IMAGE = 100;
     private final List<ImageData> imageList = new ArrayList<>();
-    ShakeBugService.Companion companion = ShakeBugService.Companion;
+    AppRemarkService.Companion companion = AppRemarkService.Companion;
     String ticketType;
     DeviceInfo deviceInfo;
     ProgressBar progressBar;
-    private ShakeBugAdapter shakeBugAdapter;
+    private ImageAdapter imageAdapter;
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private float batteryLevel;
     private final BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
@@ -112,7 +112,7 @@ public class FeedbackActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feedback);
+        setContentView(R.layout.activity_remark);
         NetworkService.checkConnectivity(this, isAvailable -> hasNetwork = isAvailable);
 
         //init views
@@ -135,7 +135,7 @@ public class FeedbackActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.rv_image);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        shakeBugAdapter = new ShakeBugAdapter(imageList, new OnItemClickListener() {
+        imageAdapter = new ImageAdapter(imageList, new OnItemClickListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onItemClick(int position) {
@@ -143,10 +143,10 @@ public class FeedbackActivity extends AppCompatActivity {
                 if (imageList.size() < 2) {
                     imgAdd.setVisibility(View.VISIBLE);
                 }
-                shakeBugAdapter.notifyDataSetChanged();
+                imageAdapter.notifyDataSetChanged();
             }
         });
-        recyclerView.setAdapter(shakeBugAdapter);
+        recyclerView.setAdapter(imageAdapter);
 
         linearLayout.setBackgroundColor(parseColorToInt(getOption("pageBackgroundColor")));
 
@@ -186,7 +186,7 @@ public class FeedbackActivity extends AppCompatActivity {
                         .setFileType(fileType)
                         .build();
                 imageList.add(imageData);
-                shakeBugAdapter.notifyItemInserted(imageList.size() - 1);
+                imageAdapter.notifyItemInserted(imageList.size() - 1);
             }
         }
 
@@ -212,7 +212,7 @@ public class FeedbackActivity extends AppCompatActivity {
                 if (imageList.size() > 1) {
                     imgAdd.setVisibility(View.GONE);
                 }
-                shakeBugAdapter.notifyItemInserted(imageList.size() - 1);
+                imageAdapter.notifyItemInserted(imageList.size() - 1);
             }
         });
 
@@ -230,7 +230,7 @@ public class FeedbackActivity extends AppCompatActivity {
                     } else {
                         Log.d(TAG, "AOAShakeBug AppId: " + appId);
                         progressBar.setVisibility(View.VISIBLE);
-                        submitFeedback(appId, description);
+                        submitRemark(appId, description);
                     }
                 } else {
                     Log.d(TAG, "AOAShakeBug : Please check your internet connection!");
@@ -383,6 +383,7 @@ public class FeedbackActivity extends AppCompatActivity {
     }
 
     private void openGallery() {
+        hideKeyboard();
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         activityResultLauncher.launch(intent);
     }
@@ -565,7 +566,7 @@ public class FeedbackActivity extends AppCompatActivity {
         }
     }
 
-    public void submitFeedback(String appId, String description) {
+    public void submitRemark(String appId, String description) {
         if (!imageList.isEmpty()) {
             getUploadImageURL();
         }
@@ -632,12 +633,12 @@ public class FeedbackActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 try {
                     if (response.code() == 200) {
-                        Toast.makeText(FeedbackActivity.this, "Your feedback submitted successfully!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(RemarkActivity.this, "Remark added successfully!", Toast.LENGTH_LONG).show();
                     } else {
                         String myResponse = response.body().string();
                         JSONObject jsonObject = new JSONObject(myResponse);
                         String message = jsonObject.getString("message");
-                        Toast.makeText(FeedbackActivity.this, message, Toast.LENGTH_LONG).show();
+                        Toast.makeText(RemarkActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

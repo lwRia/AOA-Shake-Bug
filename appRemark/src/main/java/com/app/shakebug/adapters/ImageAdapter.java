@@ -16,11 +16,11 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-public class ShakeBugAdapter extends RecyclerView.Adapter<ShakeBugAdapter.ViewHolder> {
+public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
     private final List<ImageData> imageList;
     private final OnItemClickListener onItemClickListener;
 
-    public ShakeBugAdapter(List<ImageData> imageList, OnItemClickListener onItemClickListener) {
+    public ImageAdapter(List<ImageData> imageList, OnItemClickListener onItemClickListener) {
         this.imageList = imageList;
         this.onItemClickListener = onItemClickListener;
     }
@@ -28,7 +28,7 @@ public class ShakeBugAdapter extends RecyclerView.Adapter<ShakeBugAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shake_bug, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image, parent, false);
         return new ViewHolder(view, onItemClickListener);
     }
 

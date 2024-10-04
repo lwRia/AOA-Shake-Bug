@@ -3,7 +3,7 @@ package com.app.shakebug.services
 import android.content.Context
 import android.graphics.Color
 
-class ShakeBugService {
+class AppRemarkService {
     companion object {
         //keys
         private const val pageBackgroundColor = "pageBackgroundColor"
@@ -54,7 +54,7 @@ class ShakeBugService {
             inputTextColor to INPUT_TEXT_COLOR
         )
 
-        private var raiseNewTicket: Boolean = false
+        var shakeGestureEnable: Boolean = true
         var extraPayload: Map<String, Any> = emptyMap()
         var options: Map<String, Any> = OPTIONS.toMutableMap()
 
@@ -97,10 +97,9 @@ class ShakeBugService {
 
         @JvmStatic
         @JvmOverloads
-        fun shakeBug(
+        fun initialize(
             context: Context,
-            raiseNewTicket: Boolean = false,
-            extraPayload: Map<String, Any> = emptyMap(),
+            shakeGestureEnable: Boolean = true,
             options: Map<String, Any> = OPTIONS.toMutableMap(),
         ) {
             val mutableMap = options.toMutableMap()
@@ -135,15 +134,21 @@ class ShakeBugService {
                 mutableMap[hintColor].toString() else HINT_COLOR
             mutableMap[inputTextColor] = if (inputTextColor.isValidStringColor(mutableMap))
                 mutableMap[inputTextColor].toString() else INPUT_TEXT_COLOR
-
-            Companion.raiseNewTicket = raiseNewTicket
-            Companion.extraPayload = extraPayload
             Companion.options = mutableMap
-            if (raiseNewTicket) {
-                AppsOnAirServices.raiseNewTicket(context)
-            } else {
-                AppsOnAirServices.shakeBug(context)
+            Companion.shakeGestureEnable = shakeGestureEnable
+            if (Companion.shakeGestureEnable) {
+                ShakeDetectorService.shakeDetect(context)
             }
+        }
+
+        @JvmStatic
+        @JvmOverloads
+        fun addRemark(
+            context: Context,
+            extraPayload: Map<String, Any> = emptyMap(),
+        ) {
+            Companion.extraPayload = extraPayload
+            ShakeDetectorService.addRemarkManually(context)
         }
     }
 }
