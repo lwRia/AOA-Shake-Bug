@@ -31,7 +31,7 @@
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="2"
-                android:text="@string/new_ticket"
+                android:text="@string/add_remark"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -64,11 +64,11 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tv_ticket_type"
+                        android:id="@+id/tv_remark_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="3dp"
-                        android:text="@string/ticket_type"
+                        android:text="@string/remark_type"
                         android:textColor="@color/black"
                         android:textSize="14sp" />
 
@@ -78,7 +78,7 @@
                         android:background="@drawable/rounded_spinner">
 
                         <com.skydoves.powerspinner.PowerSpinnerView
-                            android:id="@+id/sp_ticket_type"
+                            android:id="@+id/sp_remark_type"
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:layout_gravity="center"
@@ -92,7 +92,7 @@
                             android:textSize="14sp"
                             app:spinner_arrow_gravity="end"
                             app:spinner_arrow_tint="@color/black"
-                            app:spinner_item_array="@array/ticket_type_array"
+                            app:spinner_item_array="@array/remark_type_array"
                             app:spinner_item_height="40dp"
                             app:spinner_popup_animation="dropdown"
                             app:spinner_popup_background="@drawable/rounded_spinner"

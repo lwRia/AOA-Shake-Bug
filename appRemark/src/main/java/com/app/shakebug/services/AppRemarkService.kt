@@ -10,7 +10,7 @@ class AppRemarkService {
         private const val appbarBackgroundColor = "appbarBackgroundColor"
         private const val appbarTitleText = "appbarTitleText"
         private const val appbarTitleColor = "appbarTitleColor"
-        private const val ticketTypeLabelText = "ticketTypeLabelText"
+        private const val remarkTypeLabelText = "remarkTypeLabelText"
         private const val descriptionLabelText = "descriptionLabelText"
         private const val descriptionHintText = "descriptionHintText"
         private const val descriptionMaxLength = "descriptionMaxLength"
@@ -24,9 +24,9 @@ class AppRemarkService {
         //values
         private const val PAGE_BACKGROUND_COLOR = "#E8F1FF"
         private const val APP_BAR_BACKGROUND_COLOR = "#E8F1FF"
-        private const val APP_BAR_TITLE_TEXT = "New Ticket"
+        private const val APP_BAR_TITLE_TEXT = "Add Remark"
         private const val APP_BAR_TITLE_COLOR = "#000000"
-        private const val TICKET_TYPE_LABEL_TEXT = "Ticket Type"
+        private const val REMARK_TYPE_LABEL_TEXT = "Remark Type"
         private const val DESCRIPTION_LABEL_TEXT = "Description"
         private const val DESCRIPTION_HINT_TEXT = "Add description here…"
         private const val DESCRIPTION_MAX_LENGTH = 255
@@ -42,7 +42,7 @@ class AppRemarkService {
             appbarBackgroundColor to APP_BAR_BACKGROUND_COLOR,
             appbarTitleText to APP_BAR_TITLE_TEXT,
             appbarTitleColor to APP_BAR_TITLE_COLOR,
-            ticketTypeLabelText to TICKET_TYPE_LABEL_TEXT,
+            remarkTypeLabelText to REMARK_TYPE_LABEL_TEXT,
             descriptionLabelText to DESCRIPTION_LABEL_TEXT,
             descriptionHintText to DESCRIPTION_HINT_TEXT,
             descriptionMaxLength to DESCRIPTION_MAX_LENGTH,
@@ -113,8 +113,8 @@ class AppRemarkService {
                 mutableMap[appbarTitleText].toString() else APP_BAR_TITLE_TEXT
             mutableMap[appbarTitleColor] = if (appbarTitleColor.isValidStringColor(mutableMap))
                 mutableMap[appbarTitleColor].toString() else APP_BAR_TITLE_COLOR
-            mutableMap[ticketTypeLabelText] = if (ticketTypeLabelText.isValidString(mutableMap))
-                mutableMap[ticketTypeLabelText].toString() else TICKET_TYPE_LABEL_TEXT
+            mutableMap[remarkTypeLabelText] = if (remarkTypeLabelText.isValidString(mutableMap))
+                mutableMap[remarkTypeLabelText].toString() else REMARK_TYPE_LABEL_TEXT
             mutableMap[descriptionLabelText] = if (descriptionLabelText.isValidString(mutableMap))
                 mutableMap[descriptionLabelText].toString() else DESCRIPTION_LABEL_TEXT
             mutableMap[descriptionHintText] = if (descriptionHintText.isValidString(mutableMap))

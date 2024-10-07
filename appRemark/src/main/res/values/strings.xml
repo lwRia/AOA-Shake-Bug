@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">App name</string>
 
-    <string name="new_ticket">New Ticket</string>
+    <string name="add_remark">Add Remark</string>
     <string name="description">Description</string>
     <string name="add_description_here">Add description here…</string>
-    <string name="ticket_type">Ticket Type</string>
+    <string name="remark_type">Remark Type</string>
     <string name="run_on_apps_on_air">We run on AppsOnAir</string>
     <string name="submit">Submit</string>
 

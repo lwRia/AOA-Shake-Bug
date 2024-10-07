@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
                             },
                         ) {
                             Text(
-                                text = getString(R.string.create_new_ticket),
+                                text = getString(R.string.create_new_remark),
                                 fontSize = 18.sp
                             )
                         }

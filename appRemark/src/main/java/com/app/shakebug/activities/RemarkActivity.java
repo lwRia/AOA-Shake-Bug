@@ -92,7 +92,7 @@ public class RemarkActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 100;
     private final List<ImageData> imageList = new ArrayList<>();
     AppRemarkService.Companion companion = AppRemarkService.Companion;
-    String ticketType;
+    String remarkType;
     DeviceInfo deviceInfo;
     ProgressBar progressBar;
     private ImageAdapter imageAdapter;
@@ -121,13 +121,13 @@ public class RemarkActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
 
         TextView tvAppbarTitle = findViewById(R.id.tv_appbar_title);
-        TextView tvTicketType = findViewById(R.id.tv_ticket_type);
+        TextView tvRemarkType = findViewById(R.id.tv_remark_type);
 
         TextView tvDescription = findViewById(R.id.tv_description);
         TextInputEditText etDescription = findViewById(R.id.et_description);
         TextInputLayout tilDescription = findViewById(R.id.til_description);
 
-        PowerSpinnerView spinner = findViewById(R.id.sp_ticket_type);
+        PowerSpinnerView spinner = findViewById(R.id.sp_remark_type);
         Button btnSubmit = findViewById(R.id.btn_submit);
         ImageView imgClose = findViewById(R.id.img_close);
         ImageView imgAdd = findViewById(R.id.img_add);
@@ -154,8 +154,8 @@ public class RemarkActivity extends AppCompatActivity {
         tvAppbarTitle.setText(getOption("appbarTitleText"));
         tvAppbarTitle.setTextColor(parseColor(getOption("appbarTitleColor")));
 
-        tvTicketType.setText(getOption("ticketTypeLabelText"));
-        tvTicketType.setTextColor(parseColor(getOption("labelColor")));
+        tvRemarkType.setText(getOption("remarkTypeLabelText"));
+        tvRemarkType.setTextColor(parseColor(getOption("labelColor")));
 
         tvDescription.setText(getOption("descriptionLabelText"));
         tvDescription.setTextColor(parseColor(getOption("labelColor")));
@@ -195,8 +195,8 @@ public class RemarkActivity extends AppCompatActivity {
         imgAdd.setOnClickListener(view -> openGallery());
 
         spinner.selectItemByIndex(0);
-        ticketType = getResources().getStringArray(R.array.ticket_type_array)[0];
-        spinner.setOnSpinnerItemSelectedListener((OnSpinnerItemSelectedListener<String>) (oldIndex, oldItem, newIndex, newItem) -> ticketType = newItem);
+        remarkType = getResources().getStringArray(R.array.remark_type_array)[0];
+        spinner.setOnSpinnerItemSelectedListener((OnSpinnerItemSelectedListener<String>) (oldIndex, oldItem, newIndex, newItem) -> remarkType = newItem);
 
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK && result.getData() != null) {
@@ -584,7 +584,7 @@ public class RemarkActivity extends AppCompatActivity {
             JSONObject metaDataObject = new JSONObject(companion.getExtraPayload());
             dataObject.put("additionalMetadata", metaDataObject);
             dataObject.put("description", description);
-            dataObject.put("type", ticketType);
+            dataObject.put("type", remarkType);
 
             Map<String, Object> mapData = new HashMap<>();
 
