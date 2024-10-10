@@ -38,6 +38,7 @@ import com.app.shakebug.enums.ToolType.REDO
 import com.app.shakebug.enums.ToolType.SHAPE
 import com.app.shakebug.enums.ToolType.TEXT
 import com.app.shakebug.enums.ToolType.UNDO
+import com.app.shakebug.services.ShakeDetectorService
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener
 import ja.burhanrashid52.photoeditor.PhotoEditor
@@ -73,13 +74,13 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
     override fun onDestroy() {
         super.onDestroy()
         isOpen = false
+        ShakeDetectorService.isProcessing = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         if (isOpen()) {
-            // The activity is already open, so finish this instance
             finish()
             return
         }

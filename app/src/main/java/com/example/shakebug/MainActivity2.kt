@@ -1,6 +1,5 @@
 package com.example.shakebug
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.shakebug.services.AppRemarkService
 import com.example.shakebug.ui.theme.ShakeBugTheme
 
-class MainActivity : ComponentActivity() {
-    private val TAG = "MainActivity"
+class MainActivity2 : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,15 +36,21 @@ class MainActivity : ComponentActivity() {
                         Button(
                             elevation = ButtonDefaults.elevatedButtonElevation(8.dp), // Define elevation
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Yellow,
+                                containerColor = Color.Green,
                                 contentColor = Color.Black
                             ),
                             onClick = {
-                                gotoNext()
+                                AppRemarkService.addRemark(
+                                    this@MainActivity2,
+                                    extraPayload = mapOf(
+                                        "title" to "Initial Demo",
+                                        "isFromIndia" to true
+                                    )
+                                )
                             },
                         ) {
                             Text(
-                                text = getString(R.string.go_to_next),
+                                text = getString(R.string.create_new_remark),
                                 fontSize = 18.sp
                             )
                         }
@@ -54,9 +59,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    private fun gotoNext() {
-        val intent = Intent(this, MainActivity2::class.java)
-        startActivity(intent)
-    }
 }
+

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 
 class AppRemarkService {
+
     companion object {
         //keys
         private const val pageBackgroundColor = "pageBackgroundColor"
@@ -102,42 +103,46 @@ class AppRemarkService {
             shakeGestureEnable: Boolean = true,
             options: Map<String, Any> = OPTIONS.toMutableMap(),
         ) {
-            val mutableMap = options.toMutableMap()
-            mutableMap[pageBackgroundColor] =
-                if (pageBackgroundColor.isValidStringColor(mutableMap))
-                    mutableMap[pageBackgroundColor].toString() else PAGE_BACKGROUND_COLOR
-            mutableMap[appbarBackgroundColor] =
-                if (appbarBackgroundColor.isValidStringColor(mutableMap))
-                    mutableMap[appbarBackgroundColor].toString() else APP_BAR_BACKGROUND_COLOR
-            mutableMap[appbarTitleText] = if (appbarTitleText.isValidString(mutableMap))
-                mutableMap[appbarTitleText].toString() else APP_BAR_TITLE_TEXT
-            mutableMap[appbarTitleColor] = if (appbarTitleColor.isValidStringColor(mutableMap))
-                mutableMap[appbarTitleColor].toString() else APP_BAR_TITLE_COLOR
-            mutableMap[remarkTypeLabelText] = if (remarkTypeLabelText.isValidString(mutableMap))
-                mutableMap[remarkTypeLabelText].toString() else REMARK_TYPE_LABEL_TEXT
-            mutableMap[descriptionLabelText] = if (descriptionLabelText.isValidString(mutableMap))
-                mutableMap[descriptionLabelText].toString() else DESCRIPTION_LABEL_TEXT
-            mutableMap[descriptionHintText] = if (descriptionHintText.isValidString(mutableMap))
-                mutableMap[descriptionHintText].toString() else DESCRIPTION_HINT_TEXT
-            mutableMap[descriptionMaxLength] = if (descriptionMaxLength.isValidInt(mutableMap))
-                mutableMap[descriptionMaxLength].toString().toInt() else DESCRIPTION_MAX_LENGTH
-            mutableMap[buttonText] = if (buttonText.isValidString(mutableMap))
-                mutableMap[buttonText].toString() else BUTTON_TEXT
-            mutableMap[buttonTextColor] = if (buttonTextColor.isValidStringColor(mutableMap))
-                mutableMap[buttonTextColor].toString() else BUTTON_TEXT_COLOR
-            mutableMap[buttonBackgroundColor] =
-                if (buttonBackgroundColor.isValidStringColor(mutableMap))
-                    mutableMap[buttonBackgroundColor].toString() else BUTTON_BACKGROUND_COLOR
-            mutableMap[labelColor] = if (labelColor.isValidStringColor(mutableMap))
-                mutableMap[labelColor].toString() else LABEL_COLOR
-            mutableMap[hintColor] = if (hintColor.isValidStringColor(mutableMap))
-                mutableMap[hintColor].toString() else HINT_COLOR
-            mutableMap[inputTextColor] = if (inputTextColor.isValidStringColor(mutableMap))
-                mutableMap[inputTextColor].toString() else INPUT_TEXT_COLOR
-            Companion.options = mutableMap
-            Companion.shakeGestureEnable = shakeGestureEnable
-            if (Companion.shakeGestureEnable) {
-                ShakeDetectorService.shakeDetect(context)
+            val contextStr = context.toString()
+            if (!contextStr.startsWith("com.app.shakebug")) {
+                val mutableMap = options.toMutableMap()
+                mutableMap[pageBackgroundColor] =
+                    if (pageBackgroundColor.isValidStringColor(mutableMap))
+                        mutableMap[pageBackgroundColor].toString() else PAGE_BACKGROUND_COLOR
+                mutableMap[appbarBackgroundColor] =
+                    if (appbarBackgroundColor.isValidStringColor(mutableMap))
+                        mutableMap[appbarBackgroundColor].toString() else APP_BAR_BACKGROUND_COLOR
+                mutableMap[appbarTitleText] = if (appbarTitleText.isValidString(mutableMap))
+                    mutableMap[appbarTitleText].toString() else APP_BAR_TITLE_TEXT
+                mutableMap[appbarTitleColor] = if (appbarTitleColor.isValidStringColor(mutableMap))
+                    mutableMap[appbarTitleColor].toString() else APP_BAR_TITLE_COLOR
+                mutableMap[remarkTypeLabelText] = if (remarkTypeLabelText.isValidString(mutableMap))
+                    mutableMap[remarkTypeLabelText].toString() else REMARK_TYPE_LABEL_TEXT
+                mutableMap[descriptionLabelText] =
+                    if (descriptionLabelText.isValidString(mutableMap))
+                        mutableMap[descriptionLabelText].toString() else DESCRIPTION_LABEL_TEXT
+                mutableMap[descriptionHintText] = if (descriptionHintText.isValidString(mutableMap))
+                    mutableMap[descriptionHintText].toString() else DESCRIPTION_HINT_TEXT
+                mutableMap[descriptionMaxLength] = if (descriptionMaxLength.isValidInt(mutableMap))
+                    mutableMap[descriptionMaxLength].toString().toInt() else DESCRIPTION_MAX_LENGTH
+                mutableMap[buttonText] = if (buttonText.isValidString(mutableMap))
+                    mutableMap[buttonText].toString() else BUTTON_TEXT
+                mutableMap[buttonTextColor] = if (buttonTextColor.isValidStringColor(mutableMap))
+                    mutableMap[buttonTextColor].toString() else BUTTON_TEXT_COLOR
+                mutableMap[buttonBackgroundColor] =
+                    if (buttonBackgroundColor.isValidStringColor(mutableMap))
+                        mutableMap[buttonBackgroundColor].toString() else BUTTON_BACKGROUND_COLOR
+                mutableMap[labelColor] = if (labelColor.isValidStringColor(mutableMap))
+                    mutableMap[labelColor].toString() else LABEL_COLOR
+                mutableMap[hintColor] = if (hintColor.isValidStringColor(mutableMap))
+                    mutableMap[hintColor].toString() else HINT_COLOR
+                mutableMap[inputTextColor] = if (inputTextColor.isValidStringColor(mutableMap))
+                    mutableMap[inputTextColor].toString() else INPUT_TEXT_COLOR
+                Companion.options = mutableMap
+                Companion.shakeGestureEnable = shakeGestureEnable
+                if (Companion.shakeGestureEnable) {
+                    ShakeDetectorService.shakeDetect(context)
+                }
             }
         }
 
