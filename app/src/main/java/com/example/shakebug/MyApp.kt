@@ -9,14 +9,11 @@ class MyApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-
             }
 
             override fun onActivityStarted(activity: Activity) {
-
             }
 
             override fun onActivityResumed(activity: Activity) {
